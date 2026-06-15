@@ -2,12 +2,19 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
+  const [email, setEmail] =
+    useState('')
+  const [password, setPassword] =
+    useState('')
+  const [loading, setLoading] =
+    useState(false)
+  const [message, setMessage] =
+    useState('')
+
+  const router = useRouter()
 
   const handleLogin = async (
     e: React.FormEvent
@@ -17,16 +24,44 @@ export default function LoginPage() {
     setLoading(true)
     setMessage('')
 
-    const { error } =
-      await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+    const {
+      data: authData,
+      error: authError,
+    } =
+      await supabase.auth.signInWithPassword(
+        {
+          email,
+          password,
+        }
+      )
 
-    if (error) {
-      setMessage(error.message)
-    } else {
-      setMessage('Login successful!')
+    if (authError) {
+      console.log(
+        'Login failed:',
+        authError
+      )
+
+      setMessage(
+        authError.message
+      )
+
+      setLoading(false)
+      return
+    }
+
+    const user = authData.user
+
+    const { data: employee } =
+      await supabase.from('employees').select('role').eq('auth_user_id',user.id).maybeSingle()
+
+
+    if (
+      employee?.role === 'manager'
+    )
+      router.push('/admin')
+
+    else {
+      router.push('/dashboard')
     }
 
     setLoading(false)
@@ -48,7 +83,9 @@ export default function LoginPage() {
           className="w-full border p-3 rounded"
           value={email}
           onChange={(e) =>
-            setEmail(e.target.value)
+            setEmail(
+              e.target.value
+            )
           }
           required
         />
@@ -59,7 +96,9 @@ export default function LoginPage() {
           className="w-full border p-3 rounded"
           value={password}
           onChange={(e) =>
-            setPassword(e.target.value)
+            setPassword(
+              e.target.value
+            )
           }
           required
         />
