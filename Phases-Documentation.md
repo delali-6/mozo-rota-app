@@ -102,5 +102,16 @@ By 16/06/2026 I finished building
 ✅ Database insert
 ✅ RLS working
 
+16/06/2026
+Testing 10: Is the Employee search working?
+Expected Outcome: When the manager types in the search box, it should filter the list of employees based on the search query.
+
+Actual Outcome: The Employee search is working as expected, filtering the list of employees based on the search query.
+
+Testing 11: Is the Employee edit page working?
+Expected Outcome: When the manager clicks on the Edit button for an employee, it should show a form to edit the employee details with all the required fields. When the form is submitted, it should update the employee details in the database and redirect back to the Employee page.
+
+Actual Outcome: The Employee edit page displays as expected, but when the form is submitted, it returned that the 'Update Employee' was null. I added another policy to allow the manager to update the employee details and the test was successful.
+
 
 

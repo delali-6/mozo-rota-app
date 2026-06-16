@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Search, Pencil } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import {useRouter } from 'next/navigation';
 
@@ -21,21 +22,29 @@ export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [loading, setLoading] = useState(true)
 
+  const [search, setSearch] = useState('')
+
   useEffect(() => {
 
     const fetchEmployees = async () => {
       setLoading(true)
-      const { data, error } = await supabase.from('employees').select('*')
+      const { data, error } = await supabase.from('employees').select('*').order('first_name', { ascending: true })
       if (error) {
         console.error('Error fetching employees:', error)
       } else {
-        setEmployees(data)
+        setEmployees(data || [])
       }
       setLoading(false)
     }
 
     fetchEmployees()
     }, [])
+
+
+    const filteredEmployees = employees.filter((employee) => {
+      const fullName = `${employee.first_name} ${employee.last_name}`.toLowerCase()
+      return (fullName.includes(search.toLowerCase()) || employee.email.toLowerCase().includes(search.toLowerCase()))
+    })
 
   return (
     <div>
@@ -44,8 +53,9 @@ export default function EmployeesPage() {
           Employees
         </h1>
 
-        <p className="text-gray-500 mb-8">
-          Manage your Cafe employees here. You can view, add, edit, and remove employees as needed.
+        <p className="text-gray-500">{
+              employees.length
+            } {' '} staff members
         </p>
       </div>
 
@@ -53,42 +63,127 @@ export default function EmployeesPage() {
         + Add Employee
       </button>
 
-      {loading ? (
-        <p>Loading employees...</p>
-      ) : (
-        <div className="grid gap-4">
-          {employees.map((employee) => (
-            <div
-              key={employee.id}
-              className="border rounded-xl p-5 flex justify-between items-center"
-            >
-              <div>
-                <h2 className="font-semibold text-lg">
-                  {employee.first_name} {employee.last_name} {employee.email} {employee.telephone}
-                </h2>
+      {/* Search */}
+      <div className="relative mb-6">
+        <Search
+          className="absolute left-3 top-3 text-gray-400"
+          size={18}
+        />
 
-                <p className="text-gray-500">
-                  {employee.role}
-                </p>
+        <input
+          type="text"
+          placeholder="Search employees..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-10 pr-4 py-2 border rounded-lg w-full"
+        />
+      </div>
 
-                <p className="text-sm text-gray-400">
-                  {employee.employment_type}
-                </p>
-              </div>
+      {/* Table */}
+      <div className="border rounded-2xl overflow-hidden">
+        <table className="w-full">
+          <thead className="border-b bg-black-100 text-left">
+            <tr>
+              <th className="p-4 text-white">
+                Full Name
+              </th>
 
-              <div className="text-right">
-                <p className="font-medium">
-                  £{employee.hourly_rate}/hr
-                </p>
+              <th className="p-4 text-white">
+                Email
+              </th>
 
-                <p className="text-sm text-green-600">
-                  {employee.status}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+              <th className="p-4 text-white">
+                Telephone
+              </th>
+
+              <th className="p-4 text-right text-white">
+                £/hr
+              </th>
+
+              <th className="p-4 text-right text-white">
+                Status
+              </th>
+
+              <th className="p-4 text-right">
+                Actions
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {loading ? (
+              <tr>
+                <td
+                  colSpan={6}
+                  className="p-6 text-center"
+                >
+                  Loading employees...
+                </td>
+              </tr>
+            ) : (
+              filteredEmployees.map(
+                (employee) => (
+                  <tr
+                    key={
+                      employee.id
+                    }
+                    className="border-b"
+                  >
+                    <td className="p-4 font-medium text-white">
+                      {
+                        employee.first_name
+                      }{' '}
+                      {
+                        employee.last_name
+                      }
+                    </td>
+
+                    <td className="p-4 text-white">
+                      {
+                        employee.email
+                      }
+                    </td>
+
+                    <td className="p-4 text-white">
+                      {employee.telephone ||
+                        '—'}
+                    </td>
+
+                    <td className="p-4 text-right font-medium text-white">
+                      £
+                      {
+                        employee.hourly_rate
+                      }
+                    </td>
+
+                    <td className="p-4 text-right">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm ${
+                          employee.status ===
+                          'active'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-gray-100 text-gray-500'
+                        }`}
+                      >
+                        {
+                          employee.status
+                        }
+                      </span>
+                    </td>
+
+                    <td className="p-4 text-right">
+                      <button onClick={() => router.push(`/admin/employees/${employee.id}`)}
+                        className="inline-flex items-center gap-2 border rounded-lg px-3 py-2 hover:bg-gray-50">
+                        <Pencil size={16} /> Edit
+                      </button>
+                    </td>
+                  </tr>
+                )
+              )
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
