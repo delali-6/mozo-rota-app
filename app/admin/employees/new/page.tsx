@@ -16,6 +16,8 @@ export default function NewEmployeePage() {
     role: '',
     employment_type: 'part-time',
     hourly_rate: '',
+    contract_hours: '',
+    holiday_allowance: '',
     status: 'active',
   })
 
@@ -30,7 +32,7 @@ export default function NewEmployeePage() {
     e.preventDefault()
     setLoading(true)
 
-    const { error } = await supabase.from('employees').insert([ { ...formData, hourly_rate: Number(formData.hourly_rate), }, ])
+    const { error } = await supabase.from('employees').insert([ { ...formData, hourly_rate: Number(formData.hourly_rate), contract_hours: Number(formData.contract_hours), holiday_allowance: Number(formData.holiday_allowance) }, ])
 
     if (error) {
         console.error(error)
@@ -106,6 +108,20 @@ export default function NewEmployeePage() {
                     onChange={handleChange} required step="0.01" placeholder="0.00"
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     aria-label="Hourly Rate in pounds"
+                />
+
+                <label htmlFor="contract_hours" className="block text-sm font-medium text-gray-700">Contract Hours</label>
+                <input id="contract_hours" type="number" name="contract_hours" value={formData.contract_hours}
+                    onChange={handleChange} required placeholder="Enter contract hours"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    aria-label="Contract Hours"
+                />
+
+                <label htmlFor="holiday_allowance" className="block text-sm font-medium text-gray-700">Holiday Allowance</label>
+                <input id="holiday_allowance" type="number" name="holiday_allowance" value={formData.holiday_allowance}
+                    onChange={handleChange} required placeholder="Enter holiday allowance"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    aria-label="Holiday Allowance"
                 />
             </div>
 

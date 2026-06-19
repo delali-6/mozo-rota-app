@@ -34,6 +34,8 @@ export default function EditEmployeePage() {
       employment_type:
         'part-time',
       hourly_rate: '',
+      contract_hours: '',
+      holiday_allowance: '',
       status: 'active',
     })
 
@@ -87,6 +89,12 @@ export default function EditEmployeePage() {
           status:
             data.status ||
             'active',
+          contract_hours:
+            data.contract_hours?.toString() ||
+            '',
+          holiday_allowance:
+            data.holiday_allowance?.toString() ||
+            '',
         })
 
         setLoading(false)
@@ -118,7 +126,7 @@ export default function EditEmployeePage() {
       console.log('Updating employee:',employeeId)
 
       const { data, error } =
-        await supabase.from('employees').update({...formData, hourly_rate: Number(formData.hourly_rate),}).eq('id', employeeId).select()
+        await supabase.from('employees').update({...formData, hourly_rate: Number(formData.hourly_rate), contract_hours: Number(formData.contract_hours), holiday_allowance: Number(formData.holiday_allowance)}).eq('id', employeeId).select()
         console.log('Updated employee:', data)
         console.log('Error updating employee:', error)
 
@@ -192,6 +200,10 @@ export default function EditEmployeePage() {
 
         <input name="hourly_rate" type="number" step="0.01" value={formData.hourly_rate} placeholder="Hourly Rate (£)" className="w-full border rounded-lg p-3" onChange={handleChange}/>
 
+        <input name="contract_hours" type="number" value={formData.contract_hours} placeholder="Contract Hours" className="w-full border rounded-lg p-3" onChange={handleChange}/>
+
+        <input name="holiday_allowance" type="number" value={formData.holiday_allowance} placeholder="Holiday Allowance" className="w-full border rounded-lg p-3" onChange={handleChange}/>
+5274207
         <select name="status" value={formData.status} className="w-full border rounded-lg p-3" onChange={handleChange} aria-label="Status">
           <option value="active">
             Active

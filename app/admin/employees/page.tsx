@@ -177,6 +177,13 @@ export default function EmployeesPage() {
                         <Pencil size={16} /> Edit
                       </button>
                     </td>
+
+                    <td className="p-4 text-right">
+                      <button onClick={() => router.push(`/admin/employees/${employee.id}`)}
+                        className="inline-flex items-center gap-2 border rounded-lg px-3 py-2 hover:bg-gray-50">
+                          <Pencil size={16}/> Archive
+                      </button>
+                    </td>
                   </tr>
                 )
               )
