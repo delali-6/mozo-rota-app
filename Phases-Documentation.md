@@ -63,7 +63,7 @@ By 14/06/2026 I finished building
 
 
 
-Testing 6: Is the Route Guard working?
+# Testing 6: Is the Route Guard working?
 
 Expected Outcome 1: Go to http://localhost:3000/dashboard and it should redirect to the login page if not logged in
 Expected Outcome 2: If an employee not logged in tries to access http://localhost:3000/admin it should block access and redirect to the login page
@@ -73,20 +73,20 @@ Actual Outcome 1: The route guard is working as expected, redirecting to the log
 Actual Outcome 2: The route guard is working as expected, redirecting to the login page
 Actual Outcome 3: The route guard is working as expected, showing the admin page if logged in as a manager
 
-Testing 7: Is the Logout working?
+# Testing 7: Is the Logout working?
 
 Expected Outcome: When the logout button is clicked, it should log the user out and redirect to the login page (Both for manager and employee)
 
 Actual Outcome: The logout button is working as expected, logging the user out and redirecting to the login page for both manager and employee
 
-Testing 8: Is the Employee page in the manager dashboard working?
+# Testing 8: Is the Employee page in the manager dashboard working?
 
 Expected Outcome: When the manager clicks on the Employee page, it should show a list of employees and a button to add a new employee.
 
 Actual Outcome: The Employee page is working as expected, showing a list of employees and a button to add a new employee.
 
 
-Testing 9: Is the Add Employee page in the manager dashboard working?
+# Testing 9: Is the Add Employee page in the manager dashboard working?
 Expected Outcome: When the manager clicks on the Add Employee button, it should show a form to add a new employee with all the required fields. When the form is submitted, it should add the new employee to the database and redirect back to the Employee page.
 
 Actual Outcome: The app returned: failed to add employee. The error message was that the 'Add Employee' was violating one of the RLS policies. After checking the RLS policies, it was found that the policy did not allow for any insert into the employees table. A new policy was added to strictly allow the manager through authentication to insert a new employee and the test was successful.
@@ -103,15 +103,60 @@ By 16/06/2026 I finished building
 ✅ RLS working
 
 16/06/2026
-Testing 10: Is the Employee search working?
+# Testing 10: Is the Employee search working?
 Expected Outcome: When the manager types in the search box, it should filter the list of employees based on the search query.
 
 Actual Outcome: The Employee search is working as expected, filtering the list of employees based on the search query.
 
-Testing 11: Is the Employee edit page working?
+# Testing 11: Is the Employee edit page working?
 Expected Outcome: When the manager clicks on the Edit button for an employee, it should show a form to edit the employee details with all the required fields. When the form is submitted, it should update the employee details in the database and redirect back to the Employee page.
 
 Actual Outcome: The Employee edit page displays as expected, but when the form is submitted, it returned that the 'Update Employee' was null. I added another policy to allow the manager to update the employee details and the test was successful.
 
 
 
+By 21/06/2026 I finished building
+✅ Authentication
+✅ Role-based access
+✅ Protected routes
+✅ Employee list
+✅ Search
+✅ Add employee
+✅ Edit employee
+✅ Archive employee
+✅ Active/Inactive filtering
+✅ Contracted hours
+✅ Holiday allowance
+
+
+# Testing 12: Is the Employee archive working?
+Expected Outcome: When the manager clicks on the Archive button for an employee, it should show a confirmation dialog. If the manager confirms, it should archive the employee in the database and remove them from the list of employees.
+
+Actual Outcome: The Employee archive is working as expected, showing a confirmation dialog and archiving the employee in the database upon confirmation.
+
+# Testing 13: Is the Employee active/inactive filtering working?
+Expected Outcome: When the manager clicks on the Active or Inactive button, it should filter the list of employees based on their status.
+
+Actual Outcome: The Employee active/inactive filtering is working as expected, filtering the list of employees based on their status.
+
+# Testing 14: Is the Employee Profile page working?
+Expected Outcome: When the manager clicks on an employee's name, it should show the employee's profile page with all their details.
+
+Actual Outcome: The Employee Profile page is working as expected, showing the employee's profile page with all their details.
+
+# Testing 15: Are the tabs on the Employee Profile page working?
+Expected Outcome: When the manager clicks on the Availability, Shifts, and Holiday tabs, it should show the respective information for the employee.
+
+Actual Outcome: The tabs on the Employee Profile page are working as expected, showing the respective information for the employee.
+
+# Testing 16: Is the Add Availability form on the Employee Profile page working?
+Expected Outcome: When the manager fills out the Add Availability form and submits it, it should add the availability to the database and show it in the list of availabilities for the employee.
+
+Actual Outcome: The Add Availability form on the Employee Profile page was not working. It said the RLS policy was preventing the insert, but after creating a new policy, it is now working as expected, adding the availability to the database and displaying it in the list of availabilities for the employee.
+
+# Testing 17: Is the Edit Availability form on the Employee Profile page working?
+Expected Outcome: When the manager clicks on the Edit button for an availability, it should show come up in the 'Add availability' form with the existing details filled in. When the details are updated and the form is submitted, it should update the availability in the database and show the updated information in the list of availabilities for the employee.
+
+Actual Outcome: The Edit Availability form on the Employee Profile page was not working but it was an RLS policy issue. So I added another policy that enabled authenticated users to edit availabilities. It is now working as expected, showing the existing details filled in, updating the availability in the database upon submission, and displaying the updated information in the list of availabilities for the employee.
+
+22/06/2026 I will start building the Holiday table on Supabase and the app.

@@ -23,6 +23,7 @@ export default function EmployeesPage() {
   const [loading, setLoading] = useState(true)
 
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
 
   useEffect(() => {
 
@@ -45,6 +46,36 @@ export default function EmployeesPage() {
       const fullName = `${employee.first_name} ${employee.last_name}`.toLowerCase()
       return (fullName.includes(search.toLowerCase()) || employee.email.toLowerCase().includes(search.toLowerCase()))
     })
+
+    const visibleEmployees = filteredEmployees.filter(
+      (employee) => {
+        if (
+          statusFilter === 'all'
+        )
+        return true
+
+        return (
+          employee.status === statusFilter
+        )
+      }
+    )
+
+    const archiveEmployee = async (id: string) => {
+      const confirmed = window.confirm('Are you sure you want to archive this employee?')
+      if (!confirmed) return
+
+      const { error } = await supabase.from('employees').update({ status: 'inactive' }).eq('id', id)
+      if (error) {
+        alert('Failed to archive employee. Please try again.')
+        return
+      }
+
+        setEmployees((current) =>
+          current.map((employee) =>
+            employee.id === id ? { ...employee, status: 'inactive' } : employee
+          )
+        )
+      }
 
   return (
     <div>
@@ -77,6 +108,20 @@ export default function EmployeesPage() {
           onChange={(e) => setSearch(e.target.value)}
           className="pl-10 pr-4 py-2 border rounded-lg w-full"
         />
+      </div>
+
+      <div className="flex gap-2 mb-6">
+        <button onClick={() => setStatusFilter('all')}
+          className="border px-3 py-2 rounded-lg">All
+        </button>
+
+        <button onClick={() => setStatusFilter('active')}
+          className="border px-3 py-2 rounded-lg">Active
+        </button>
+
+        <button onClick={() => setStatusFilter('inactive')}
+          className="border px-3 py-2 rounded-lg">Inactive
+        </button>
       </div>
 
       {/* Table */}
@@ -121,7 +166,7 @@ export default function EmployeesPage() {
                 </td>
               </tr>
             ) : (
-              filteredEmployees.map(
+              visibleEmployees.map(
                 (employee) => (
                   <tr
                     key={
@@ -130,12 +175,15 @@ export default function EmployeesPage() {
                     className="border-b"
                   >
                     <td className="p-4 font-medium text-white">
+                      <button onClick={() => router.push(`/admin/employees/${employee.id}`)}
+                        className="hover:underline">
                       {
                         employee.first_name
                       }{' '}
                       {
                         employee.last_name
                       }
+                      </button>
                     </td>
 
                     <td className="p-4 text-white">
@@ -172,14 +220,14 @@ export default function EmployeesPage() {
                     </td>
 
                     <td className="p-4 text-right">
-                      <button onClick={() => router.push(`/admin/employees/${employee.id}`)}
+                      <button onClick={() => router.push(`/admin/employees/${employee.id}/edit`)}
                         className="inline-flex items-center gap-2 border rounded-lg px-3 py-2 hover:bg-gray-50">
                         <Pencil size={16} /> Edit
                       </button>
                     </td>
 
                     <td className="p-4 text-right">
-                      <button onClick={() => router.push(`/admin/employees/${employee.id}`)}
+                      <button onClick={() => archiveEmployee(employee.id)}
                         className="inline-flex items-center gap-2 border rounded-lg px-3 py-2 hover:bg-gray-50">
                           <Pencil size={16}/> Archive
                       </button>
