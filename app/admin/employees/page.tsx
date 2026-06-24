@@ -12,6 +12,9 @@ type Employee = {
   email: string
   telephone: string
   role: string
+  job_title: string
+  contract_hours: number
+  holiday_allowance: number
   employment_type: string
   hourly_rate: number
   status: string

@@ -14,6 +14,7 @@ export default function NewEmployeePage() {
     email: '',
     telephone: '',
     role: '',
+    job_title: '',
     employment_type: 'part-time',
     hourly_rate: '',
     contract_hours: '',
@@ -32,7 +33,7 @@ export default function NewEmployeePage() {
     e.preventDefault()
     setLoading(true)
 
-    const { error } = await supabase.from('employees').insert([ { ...formData, hourly_rate: Number(formData.hourly_rate), contract_hours: Number(formData.contract_hours), holiday_allowance: Number(formData.holiday_allowance) }, ])
+    const { error } = await supabase.from('employees').insert([ { ...formData, job_title: formData.job_title, hourly_rate: Number(formData.hourly_rate), contract_hours: Number(formData.contract_hours), holiday_allowance: Number(formData.holiday_allowance) }, ])
 
     if (error) {
         console.error(error)
@@ -93,6 +94,13 @@ export default function NewEmployeePage() {
                     <option value="Employee">Employee</option>
                     <option value="Manager">Manager</option>
                 </select>
+
+                <label htmlFor="job_title" className="block text-sm font-medium text-gray-700">Job Title</label>
+                <input id="job_title" type="text" name="job_title" value={formData.job_title}
+                    onChange={handleChange} required placeholder="Enter job title"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    aria-label="Job Title"
+                />
 
                 <label htmlFor="employment_type" className="block text-sm font-medium text-gray-700">Employment Type</label>
                 <select id="employment_type" name="employment_type" value={formData.employment_type}
