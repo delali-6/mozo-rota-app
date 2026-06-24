@@ -27,6 +27,16 @@ type availability = {
   available: boolean
 }
 
+type holiday = {
+  id: string
+  employee_id: string
+  start_date: string
+  end_date: string
+  days_requested: number
+  status: 'pending' | 'approved' | 'rejected'
+  notes: string
+}
+
 export default function EmployeeProfilePage() {
 
   const Params = useParams()
@@ -36,6 +46,13 @@ export default function EmployeeProfilePage() {
   const [loading, setLoading] = useState(true)
 
   const [ activeTab, setActiveTab] = useState('profile')
+  const [holidays, setHolidays] = useState<holiday[]>([])
+  const [newHoliday, setNewHoliday] = useState({
+    start_date: '',
+    end_date: '',
+    notes: '',
+    status: 'pending',
+  })
   const [availability, setAvailability] = useState<availability[]>([])
   const [editingAvailabilityId, setEditingAvailabilityId] = useState<string | null>(null)
   const [newAvailability, setNewAvailability] = useState({
@@ -44,6 +61,7 @@ export default function EmployeeProfilePage() {
         'end_time': '',
         'available': true,
       })
+  const [editingHoliday, setEditingHoliday] = useState<holiday | null>(null)
 
   const saveAvailability = async () => {
     const existingRecord = availability.find(
@@ -166,6 +184,20 @@ export default function EmployeeProfilePage() {
       }
 
       setLoading(false)
+
+      const {
+        data: holidayData, error: holidayError } = await supabase
+          .from('holidays')
+          .select('*')
+          .eq('employee_id', employeeId)
+          .order('start_date', { ascending: false })
+
+      if (holidayError) {
+        console.error(holidayError)
+        alert('Failed to load holidays')
+      } else {
+        setHolidays(holidayData || [])
+      }
     }
 
     loadEmployee()
@@ -212,6 +244,106 @@ export default function EmployeeProfilePage() {
       return
     }
     setAvailability((prev) => prev.filter((item) => item.id !== id))
+  }
+
+  const submitHoliday = async () => {
+    if (!newHoliday.start_date || !newHoliday.end_date) {
+      alert('Please fill in both start and end dates.')
+      return
+    }
+    const start = new Date(newHoliday.start_date)
+    const end = new Date(newHoliday.end_date)
+    const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
+    const error = await supabase
+      .from('holidays')
+      .insert({
+        employee_id: employeeId,
+        start_date: newHoliday.start_date,
+        end_date: newHoliday.end_date,
+        days_requested: days,
+        status: 'pending',
+        notes: newHoliday.notes,
+      })
+      if (error.error) {
+        console.error(error.error)
+        alert('Failed to submit holiday request')
+        return
+      }
+      const { data: holidayData, error: holidayError } = await supabase
+        .from('holidays')
+        .select('*')
+        .eq('employee_id', employeeId)
+
+      if (holidayError) {
+        console.error(holidayError)
+        alert('Failed to refresh holiday requests')
+        return
+      }
+
+      setHolidays(holidayData || [])
+      setNewHoliday({
+        start_date: '',
+        end_date: '',
+        notes: '',
+        status: 'pending',
+      })
+  }
+  
+
+  const updateHolidayStatus = async (holidayId: string, status: 'approved' | 'rejected' | 'pending') => {
+    const { error } = await supabase
+      .from('holidays')
+      .update({ status })
+      .eq('id', holidayId)
+
+    if (error) {
+      console.error(error)
+      alert('Failed to update holiday status')
+      return
+    }
+
+    setHolidays(holidays.map((holiday) =>
+      holiday.id === holidayId ? { ...holiday, status } : holiday
+    ))
+  }
+
+  const saveHolidayEdit = async () => {
+    if (!editingHoliday) return
+
+    const start = new Date(editingHoliday.start_date)
+    const end = new Date(editingHoliday.end_date)
+    const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
+
+    const { error } = await supabase
+      .from('holidays')
+      .update({
+        start_date: editingHoliday.start_date,
+        end_date: editingHoliday.end_date,
+        notes: editingHoliday.notes,
+        days_requested: days,
+        status: 'pending',
+      })
+      .eq('id', editingHoliday.id)
+
+      if (error) {
+        console.error(error)
+        alert('Failed to update holiday request')
+        return
+      }
+
+      setHolidays(holidays.map((holiday) =>
+        holiday.id === editingHoliday.id
+          ? {
+              ...holiday,
+              start_date: editingHoliday.start_date,
+              end_date: editingHoliday.end_date,
+              notes: editingHoliday.notes,
+              days_requested: days,
+              status: 'pending',
+            }
+          : holiday
+      ))
+      setEditingHoliday(null)
   }
 
   return (
@@ -364,7 +496,101 @@ export default function EmployeeProfilePage() {
 
       {activeTab === 'holiday' && (
         <div className="max-w-4xl mx-auto p-4">
-          <p>Holiday records coming soon</p>
+          <div className="mb-6 border rounded-xl p-4 space-y-4">
+            <div>
+              Holiday Summary
+            </div>
+            <p>Holiday Allowance: {' '} {employee.holiday_allowance} days</p>
+        </div>
+        <div className="border rounded-xl p-4 space-y-4">
+          <h3 className="font-semibold">Request Holiday</h3>
+          <label className="flex items-center gap-2">
+            <span>Start Date:</span>
+            <input type="date" value={newHoliday.start_date} onChange={(e) => setNewHoliday({ ...newHoliday, start_date: e.target.value })} className="border rounded-lg p-2" />
+          </label>
+          <label className="flex items-center gap-2">
+            <span>End Date:</span>
+            <input type="date" value={newHoliday.end_date} onChange={(e) => setNewHoliday({ ...newHoliday, end_date: e.target.value })} className="border rounded-lg p-2" />
+          </label>
+          <textarea placeholder="Notes" value={newHoliday.notes} onChange={(e) => setNewHoliday({ ...newHoliday, notes: e.target.value })} className="border rounded-lg p-2 w-full" />
+          <button onClick={submitHoliday} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+            Submit Holiday Request
+          </button>
+        </div>
+        <div>
+          <h3 className="font-semibold mt-6">Previous Holiday Requests</h3>
+          {holidays.length === 0 ? (
+            <p>No holiday requests found.</p>
+          ) : (
+            <table className="min-w-full border-collapse border border-gray-300 mt-2">
+              <thead>
+                <tr>
+                  <th className="border border-gray-300 p-2 text-left">Start Date</th>
+                  <th className="border border-gray-300 p-2 text-left">End Date</th>
+                  <th className="border border-gray-300 p-2 text-left">Days Requested</th>
+                  <th className="border border-gray-300 p-2 text-left">Status</th>
+                  <th className="border border-gray-300 p-2 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {holidays.map((holiday) => (
+                  <tr key={holiday.id}>
+                    <td className="border border-gray-300 p-2">{holiday.start_date}</td>
+                    <td className="border border-gray-300 p-2">{holiday.end_date}</td>
+                    <td className="border border-gray-300 p-2">{holiday.days_requested}</td>
+                    <td className="border border-gray-300 p-2">{holiday.status}</td>
+                    <td className="border border-gray-300 p-2">
+                      <div className="flex gap-2">
+                        <button onClick={() => setEditingHoliday(holiday)} className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                          Edit
+                        </button>
+                        {holiday.status === 'pending' && (
+                          <>
+                      <div className="flex gap-2">
+                          <button onClick= {() => updateHolidayStatus(holiday.id, 'approved')}
+                          className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600">
+                            Approve
+                          </button>
+                          <button onClick={() => updateHolidayStatus(holiday.id, 'rejected')}
+                          className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                            Reject
+                          </button>
+                        </div>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+        )}
+            {editingHoliday && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <h3 className="font-semibold mb-4">Edit Holiday Request</h3>
+                <label className="flex items-center gap-2">
+                  <span>Start Date:</span>
+                  <input type="date" value={editingHoliday.start_date} onChange={(e) => setEditingHoliday({ ...editingHoliday, start_date: e.target.value })} className="border rounded-lg p-2" />
+                </label>
+                <label className="flex items-center gap-2">
+                  <span>End Date:</span>
+                  <input type="date" value={editingHoliday.end_date} onChange={(e) => setEditingHoliday({ ...editingHoliday, end_date: e.target.value })} className="border rounded-lg p-2" />
+                </label>
+                <label className="flex items-center gap-2">
+                  <span>Notes:</span>
+                  <textarea placeholder="Notes" value={editingHoliday.notes} onChange={(e) => setEditingHoliday({ ...editingHoliday, notes: e.target.value })} className="border rounded-lg p-2 w-full" />
+                </label>
+                <div className="flex gap-2 mt-4">
+                  <button onClick={saveHolidayEdit} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                    Save
+                  </button>
+                  <button onClick={() => setEditingHoliday(null)} className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+        </div>
         </div>
       )}
 
