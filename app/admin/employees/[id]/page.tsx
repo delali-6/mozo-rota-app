@@ -346,6 +346,9 @@ export default function EmployeeProfilePage() {
       setEditingHoliday(null)
   }
 
+  const usedHolidays = holidays.filter((holiday) => holiday.status === 'approved').reduce((total, holiday) => total + holiday.days_requested, 0)
+  const remainingHolidayDays = employee ? employee.holiday_allowance - usedHolidays : 0
+
   return (
     <div className="max-w-4xl mx-auto p-4">
       <div className="flex-justify-center text-2xl font-bold mb-4">
@@ -490,7 +493,7 @@ export default function EmployeeProfilePage() {
 
       {activeTab === 'shifts' && (
         <div className="max-w-4xl mx-auto p-4">
-          <p>Assigned shifts coming soon</p>
+         
         </div>
       )}
 
@@ -500,7 +503,20 @@ export default function EmployeeProfilePage() {
             <div>
               Holiday Summary
             </div>
-            <p>Holiday Allowance: {' '} {employee.holiday_allowance} days</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="border rounded-lg p-4 text-center">
+                <p className="text-sm text-gray-500">Holiday Allowance</p>
+                <p className="text-lg font-semibold">{employee.holiday_allowance} days</p>
+              </div>
+              <div className="border rounded-lg p-4 text-center">
+                <p className="text-sm text-gray-500">Used Holidays</p>
+                <p className="text-lg font-semibold">{usedHolidays} days</p>
+              </div>
+              <div className="border rounded-lg p-4 text-center">
+                <p className="text-sm text-gray-500">Remaining Holidays</p>
+                <p className="text-lg font-semibold">{remainingHolidayDays} days</p>
+              </div>
+            </div>
         </div>
         <div className="border rounded-xl p-4 space-y-4">
           <h3 className="font-semibold">Request Holiday</h3>

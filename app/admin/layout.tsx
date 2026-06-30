@@ -50,9 +50,9 @@ export default function AdminLayout({ children, }: { children: React.ReactNode }
                         <span>Weekly Rota</span>
                     </Link>
 
-                    <Link href="/admin/create-shift" className="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded">
+                    <Link href="/admin/shifts" className="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded">
                         <PlusSquare size={20} />
-                        <span>Create Shift</span>
+                        <span>Shifts</span>
                     </Link>
 
                     <Link href="/admin/announcements" className="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded">

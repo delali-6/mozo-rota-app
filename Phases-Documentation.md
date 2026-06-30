@@ -160,3 +160,33 @@ Expected Outcome: When the manager clicks on the Edit button for an availability
 Actual Outcome: The Edit Availability form on the Employee Profile page was not working but it was an RLS policy issue. So I added another policy that enabled authenticated users to edit availabilities. It is now working as expected, showing the existing details filled in, updating the availability in the database upon submission, and displaying the updated information in the list of availabilities for the employee.
 
 22/06/2026 I will start building the Holiday table on Supabase and the app.
+
+By 24/06/2026 I finished building the Holiday table and creating a dashboard for it
+Current Mozo Capabilities:
+Authentication
+├─ Login
+├─ Roles
+└─ Protected Routes
+
+Employees
+├─ List
+├─ Search
+├─ Add
+├─ Edit
+├─ Archive
+└─ Profiles
+
+Availability
+├─ View
+├─ Add
+├─ Edit
+├─ Delete
+└─ Duplicate Prevention
+
+Holidays
+├─ Request
+├─ Edit
+├─ Approve
+├─ Reject
+├─ History
+└─ Balance Calculation
