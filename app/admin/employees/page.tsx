@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Search, Pencil } from 'lucide-react'
+import { Search, Pencil } from '@/lib/icons'
 import { supabase } from '@/lib/supabase'
-import {useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'
 
 type Employee = {
   id: string
@@ -29,7 +29,6 @@ export default function EmployeesPage() {
   const [statusFilter, setStatusFilter] = useState('all')
 
   useEffect(() => {
-
     const fetchEmployees = async () => {
       setLoading(true)
       const { data, error } = await supabase.from('employees').select('*').order('first_name', { ascending: true })
@@ -42,117 +41,122 @@ export default function EmployeesPage() {
     }
 
     fetchEmployees()
-    }, [])
+  }, [])
 
+  const filteredEmployees = employees.filter((employee) => {
+    const fullName = `${employee.first_name} ${employee.last_name}`.toLowerCase()
+    return fullName.includes(search.toLowerCase()) || employee.email.toLowerCase().includes(search.toLowerCase())
+  })
 
-    const filteredEmployees = employees.filter((employee) => {
-      const fullName = `${employee.first_name} ${employee.last_name}`.toLowerCase()
-      return (fullName.includes(search.toLowerCase()) || employee.email.toLowerCase().includes(search.toLowerCase()))
-    })
+  const visibleEmployees = filteredEmployees.filter((employee) => {
+    if (statusFilter === 'all') return true
 
-    const visibleEmployees = filteredEmployees.filter(
-      (employee) => {
-        if (
-          statusFilter === 'all'
-        )
-        return true
+    return employee.status === statusFilter
+  })
 
-        return (
-          employee.status === statusFilter
-        )
-      }
+  const archiveEmployee = async (id: string) => {
+    const confirmed = window.confirm('Are you sure you want to archive this employee?')
+    if (!confirmed) return
+
+    const { error } = await supabase.from('employees').update({ status: 'inactive' }).eq('id', id)
+    if (error) {
+      alert('Failed to archive employee. Please try again.')
+      return
+    }
+
+    setEmployees((current) =>
+      current.map((employee) =>
+        employee.id === id ? { ...employee, status: 'inactive' } : employee
+      )
     )
+  }
 
-    const archiveEmployee = async (id: string) => {
-      const confirmed = window.confirm('Are you sure you want to archive this employee?')
-      if (!confirmed) return
-
-      const { error } = await supabase.from('employees').update({ status: 'inactive' }).eq('id', id)
-      if (error) {
-        alert('Failed to archive employee. Please try again.')
-        return
-      }
-
-        setEmployees((current) =>
-          current.map((employee) =>
-            employee.id === id ? { ...employee, status: 'inactive' } : employee
-          )
-        )
-      }
+  const getStatusBadgeClass = (status: string) => {
+    if (status === 'active') return 'mozo-badge mozo-badge-completed'
+    return 'mozo-badge mozo-badge-cancelled'
+  }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-3xl font-bold mb-2">
-          Employees
-        </h1>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="mozo-title">Employees</h1>
+          <p className="mozo-subtitle mt-1">{employees.length} staff members</p>
+        </div>
 
-        <p className="text-gray-500">{
-              employees.length
-            } {' '} staff members
-        </p>
-      </div>
-
-      <button onClick={() => router.push('/admin/employees/new')} className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-        + Add Employee
-      </button>
-
-      {/* Search */}
-      <div className="relative mb-6">
-        <Search
-          className="absolute left-3 top-3 text-gray-400"
-          size={18}
-        />
-
-        <input
-          type="text"
-          placeholder="Search employees..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-10 pr-4 py-2 border rounded-lg w-full"
-        />
-      </div>
-
-      <div className="flex gap-2 mb-6">
-        <button onClick={() => setStatusFilter('all')}
-          className="border px-3 py-2 rounded-lg">All
-        </button>
-
-        <button onClick={() => setStatusFilter('active')}
-          className="border px-3 py-2 rounded-lg">Active
-        </button>
-
-        <button onClick={() => setStatusFilter('inactive')}
-          className="border px-3 py-2 rounded-lg">Inactive
+        <button
+          onClick={() => router.push('/admin/employees/new')}
+          className="mozo-btn mozo-btn-primary"
+        >
+          + Add Employee
         </button>
       </div>
 
-      {/* Table */}
-      <div className="border rounded-2xl overflow-hidden">
-        <table className="w-full">
-          <thead className="border-b bg-black-100 text-left">
+      <div className="mozo-card p-4 space-y-4">
+        <div className="relative">
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--mozo-text-secondary)]"
+            size={18}
+          />
+
+          <input
+            type="text"
+            placeholder="Search employees..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="mozo-input pl-10"
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setStatusFilter('all')}
+            className={`mozo-btn ${statusFilter === 'all' ? 'mozo-btn-primary' : 'mozo-btn-outline'}`}
+          >
+            All
+          </button>
+
+          <button
+            onClick={() => setStatusFilter('active')}
+            className={`mozo-btn ${statusFilter === 'active' ? 'mozo-btn-primary' : 'mozo-btn-outline'}`}
+          >
+            Active
+          </button>
+
+          <button
+            onClick={() => setStatusFilter('inactive')}
+            className={`mozo-btn ${statusFilter === 'inactive' ? 'mozo-btn-primary' : 'mozo-btn-outline'}`}
+          >
+            Inactive
+          </button>
+        </div>
+      </div>
+
+      <div className="mozo-table-wrap">
+        <table className="mozo-table min-w-full">
+          <thead>
             <tr>
-              <th className="p-4 text-white">
+              <th>
                 Full Name
               </th>
 
-              <th className="p-4 text-white">
+              <th>
                 Email
               </th>
 
-              <th className="p-4 text-white">
+              <th>
                 Telephone
               </th>
 
-              <th className="p-4 text-right text-white">
+              <th className="text-right">
                 £/hr
               </th>
 
-              <th className="p-4 text-right text-white">
+              <th className="text-right">
                 Status
               </th>
 
-              <th className="p-4 text-right">
+              <th className="text-right">
                 Actions
               </th>
             </tr>
@@ -163,9 +167,18 @@ export default function EmployeesPage() {
               <tr>
                 <td
                   colSpan={6}
-                  className="p-6 text-center"
+                  className="p-6 text-center mozo-subtitle"
                 >
                   Loading employees...
+                </td>
+              </tr>
+            ) : visibleEmployees.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={6}
+                  className="p-8 text-center mozo-subtitle"
+                >
+                  No employees found for this filter.
                 </td>
               </tr>
             ) : (
@@ -175,65 +188,51 @@ export default function EmployeesPage() {
                     key={
                       employee.id
                     }
-                    className="border-b"
+                    className="transition"
                   >
-                    <td className="p-4 font-medium text-white">
-                      <button onClick={() => router.push(`/admin/employees/${employee.id}`)}
-                        className="hover:underline">
-                      {
-                        employee.first_name
-                      }{' '}
-                      {
-                        employee.last_name
-                      }
+                    <td className="font-medium">
+                      <button
+                        onClick={() => router.push(`/admin/employees/${employee.id}`)}
+                        className="hover:text-[var(--mozo-primary)] hover:underline"
+                      >
+                        {employee.first_name} {employee.last_name}
                       </button>
                     </td>
 
-                    <td className="p-4 text-white">
-                      {
-                        employee.email
-                      }
+                    <td>
+                      {employee.email}
                     </td>
 
-                    <td className="p-4 text-white">
-                      {employee.telephone ||
-                        '—'}
+                    <td>
+                      {employee.telephone || '—'}
                     </td>
 
-                    <td className="p-4 text-right font-medium text-white">
-                      £
-                      {
-                        employee.hourly_rate
-                      }
+                    <td className="text-right font-medium">
+                      £{employee.hourly_rate}
                     </td>
 
-                    <td className="p-4 text-right">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm ${
-                          employee.status ===
-                          'active'
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-gray-100 text-gray-500'
-                        }`}
-                      >
-                        {
-                          employee.status
-                        }
+                    <td className="text-right">
+                      <span className={getStatusBadgeClass(employee.status)}>
+                        {employee.status}
                       </span>
                     </td>
 
-                    <td className="p-4 text-right">
-                      <button onClick={() => router.push(`/admin/employees/${employee.id}/edit`)}
-                        className="inline-flex items-center gap-2 border rounded-lg px-3 py-2 hover:bg-gray-50">
-                        <Pencil size={16} /> Edit
-                      </button>
-                    </td>
+                    <td className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => router.push(`/admin/employees/${employee.id}/edit`)}
+                          className="mozo-btn mozo-btn-outline inline-flex items-center gap-2 text-sm"
+                        >
+                          <Pencil size={16} /> Edit
+                        </button>
 
-                    <td className="p-4 text-right">
-                      <button onClick={() => archiveEmployee(employee.id)}
-                        className="inline-flex items-center gap-2 border rounded-lg px-3 py-2 hover:bg-gray-50">
-                          <Pencil size={16}/> Archive
-                      </button>
+                        <button
+                          onClick={() => archiveEmployee(employee.id)}
+                          className="mozo-btn mozo-btn-danger inline-flex items-center gap-2 text-sm"
+                        >
+                          Archive
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 )

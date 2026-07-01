@@ -1,12 +1,8 @@
 # Phase 1 Testing
-
-
-
+# colour scheme: brown, white, black, and warm beige neutrals
+![alt text](image.png)
 ## Database Testing
-
-
-
-#### Testing 1: Add an Employee
+# Testing 1: Add an Employee
 
 Expected Outcome: Employee details that are required or Non-nullable should be entered and saved successfully
 
@@ -14,7 +10,7 @@ Actual Outcome: Employee details that were required were added successfully
 
 
 
-#### Testing 2: Add Availability
+# Testing 2: Add Availability
 
 Expected Outcome: Using employee\_id, input necessary fields and it should be referenced and save correctly.
 
@@ -22,7 +18,7 @@ Actual Outcome: Using the employee\_id for Sarah from the employee table, it was
 
 
 
-#### Testing 3: Add Shift
+# Testing 3: Add Shift
 
 Expected Outcome: Using employee\_id for both columns: employee\_id and created\_by, create a new row for the employee, Sarah successfully
 
@@ -30,7 +26,7 @@ Actual Outcome: The row has been successfully created. Note: For the row to be s
 
 
 
-#### Testing 4: Try entering an invalid employee
+# Testing 4: Try entering an invalid employee
 
 Expected Outcome: The database should throw an error at the invalid employee\_id input
 
@@ -51,7 +47,7 @@ Expected Outcome: Go to http://localhost:3000/login and the input boxes should b
 Actual Outcome: The login page is working as expected
 
 
-By 14/06/2026 I finished building
+# By 14/06/2026 I finished building
 ✅ database schema
 ✅ relationships
 ✅ Supabase Auth login
@@ -91,7 +87,7 @@ Expected Outcome: When the manager clicks on the Add Employee button, it should 
 
 Actual Outcome: The app returned: failed to add employee. The error message was that the 'Add Employee' was violating one of the RLS policies. After checking the RLS policies, it was found that the policy did not allow for any insert into the employees table. A new policy was added to strictly allow the manager through authentication to insert a new employee and the test was successful.
 
-By 16/06/2026 I finished building
+# By 16/06/2026 I finished building
 ✅ Auth system
 ✅ Role-based routing
 ✅ Protected pages
@@ -102,7 +98,7 @@ By 16/06/2026 I finished building
 ✅ Database insert
 ✅ RLS working
 
-16/06/2026
+# 16/06/2026
 # Testing 10: Is the Employee search working?
 Expected Outcome: When the manager types in the search box, it should filter the list of employees based on the search query.
 
@@ -115,7 +111,7 @@ Actual Outcome: The Employee edit page displays as expected, but when the form i
 
 
 
-By 21/06/2026 I finished building
+# By 21/06/2026 I finished building
 ✅ Authentication
 ✅ Role-based access
 ✅ Protected routes
@@ -161,7 +157,7 @@ Actual Outcome: The Edit Availability form on the Employee Profile page was not 
 
 22/06/2026 I will start building the Holiday table on Supabase and the app.
 
-By 24/06/2026 I finished building the Holiday table and creating a dashboard for it
+# By 24/06/2026 I finished building the Holiday table and creating a dashboard for it
 Current Mozo Capabilities:
 Authentication
 ├─ Login
@@ -190,3 +186,76 @@ Holidays
 ├─ Reject
 ├─ History
 └─ Balance Calculation
+
+By 30/06/2026 I've built:
+
+Authentication
+✅ Login
+✅ Role-based routing
+✅ Manager / Employee permissions
+
+Employee Management
+✅ Employee List
+✅ Add Employee
+✅ Edit Employee
+✅ Archive Employee
+✅ Employee Profile
+
+Availability
+✅ Add Availability
+✅ Edit Availability
+✅ Delete Availability
+✅ RLS Policies
+
+Holidays
+✅ Request Holiday
+✅ Approve Holiday
+✅ Reject Holiday
+✅ Edit Holiday
+✅ Holiday Balance
+✅ Remaining Allowance
+
+Shift Management
+✅ Create Shift
+✅ Edit Shift
+✅ Delete Shift
+✅ Employee Relationship
+✅ Shift Table
+✅ Component Refactor
+
+Admin
+✅ Dashboard
+✅ Navigation
+✅ Protected Routes
+
+
+# Testing 18: Is the Shift edit form on the Employee Profile page working?
+Expected Outcome: When the manager clicks on the Edit button for a shift, it should show come up in the 'Add shift' form with the existing details filled in. When the details are updated and the form is submitted, it should update the shift in the database and show the updated information in the list of shifts for the employee.
+
+Actual Outcome: The Edit Shift form on the Employee Profile page was working but the 'Select employee' placeholder in the textbox was hidden and when other employees were selected, it did not update correctly. So I fixed the issue with the placeholder by adding an aria-label to the select element and updating the employee selection logic. It is now working as expected, showing the existing details filled in, updating the shift in the database upon submission, and displaying the updated information in the list of shifts for the employee.
+
+### Phase 6 Roadmap
+Step 1 ✅ Create the rota page
+
+Step 2 ✅ Week selector
+
+Step 3 ✅ Generate Monday–Sunday
+
+Step 4 ✅ Display employees
+
+Step 5 ✅ Load shifts into cells
+
+Step 6 ✅ Click cell to create shift
+
+Step 7 ✅ Click shift to edit
+
+Step 8 ✅ Availability warnings
+
+Step 9 ✅ Holiday warnings
+
+Step 10 ✅ Publish rota
+
+# Testing 19: Is the Rota page working?
+Expected Outcome: When the manager clicks on the Rota page, it should show a week selector and a table with the days of the week as columns and the employees as rows. The shifts should be displayed in the respective cells.
+
+Actual Outcome: The Rota page is working as expected, showing a week selector and a table with the days of the week as columns and the employees as rows. The shifts are displayed in the respective cells. I just modified the colours of the rota page to match the design system colours. The rota page now has a brown gradient for the day headers and a white background for the employee rows. The shifts are displayed in a light beige colour with black text. The availability and holiday warnings are displayed in red and yellow respectively.

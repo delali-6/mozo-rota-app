@@ -16,7 +16,6 @@ export default function EditEmployeePage() {
 
   const employeeId =
     params.id as string
-    console.log('Employee ID:', employeeId)
 
   const [loading, setLoading] =
     useState(true)
@@ -54,7 +53,6 @@ export default function EditEmployeePage() {
           )
           .single()
 
-          console.log('Fetched employee:', data)
         if (error) {
           console.error(
             error
@@ -123,12 +121,8 @@ export default function EditEmployeePage() {
 
       setSaving(true)
 
-      console.log('Updating employee:',employeeId)
-
       const { data, error } =
         await supabase.from('employees').update({...formData, hourly_rate: Number(formData.hourly_rate), contract_hours: Number(formData.contract_hours), holiday_allowance: Number(formData.holiday_allowance)}).eq('id', employeeId).select()
-        console.log('Updated employee:', data)
-        console.log('Error updating employee:', error)
 
       if (error) {
         console.error(error)
@@ -151,34 +145,36 @@ export default function EditEmployeePage() {
 
   if (loading) {
     return (
-      <p>
-        Loading employee...
-      </p>
+      <div className="mozo-card p-4 max-w-2xl">
+        <p className="mozo-subtitle">Loading employee...</p>
+      </div>
     )
   }
 
   return (
-    <div className="max-w-2xl">
-      <h1 className="text-3xl font-bold mb-2">
+    <div className="max-w-4xl mx-auto space-y-6">
+      <div>
+      <h1 className="mozo-title mb-2">
         Edit Employee
       </h1>
 
-      <p className="text-gray-500 mb-8">
+      <p className="mozo-subtitle">
         Update employee details
       </p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="mozo-card p-6 space-y-5">
         <div className="grid grid-cols-2 gap-4">
-          <input name="first_name" value={formData.first_name} placeholder="First Name" className="border rounded-lg p-3" onChange={handleChange} required />
+          <input name="first_name" value={formData.first_name} placeholder="First Name" className="mozo-input" onChange={handleChange} required />
 
-          <input name="last_name" value={formData.last_name} placeholder="Last Name" className="border rounded-lg p-3" onChange={handleChange} required />
+          <input name="last_name" value={formData.last_name} placeholder="Last Name" className="mozo-input" onChange={handleChange} required />
         </div>
 
-        <input name="email" type="email" value={formData.email} placeholder="Email" className="w-full border rounded-lg p-3" onChange={handleChange} required />
+        <input name="email" type="email" value={formData.email} placeholder="Email" className="mozo-input" onChange={handleChange} required />
 
-        <input name="telephone" value={formData.telephone} placeholder="Telephone" className="w-full border rounded-lg p-3" onChange={handleChange} />
+        <input name="telephone" value={formData.telephone} placeholder="Telephone" className="mozo-input" onChange={handleChange} />
 
-        <select name="role" value={formData.role} className="w-full border rounded-lg p-3" onChange={handleChange} aria-label="Role">
+        <select name="role" value={formData.role} className="mozo-select" onChange={handleChange} aria-label="Role">
           <option value="employee">
             Employee
           </option>
@@ -188,7 +184,7 @@ export default function EditEmployeePage() {
           </option>
         </select>
 
-        <select name="employment_type" value={formData.employment_type} className="w-full border rounded-lg p-3" onChange={handleChange} aria-label="Employment Type">
+        <select name="employment_type" value={formData.employment_type} className="mozo-select" onChange={handleChange} aria-label="Employment Type">
           <option value="part-time">
             Part-Time
           </option>
@@ -198,13 +194,13 @@ export default function EditEmployeePage() {
           </option>
         </select>
 
-        <input name="hourly_rate" type="number" step="0.01" value={formData.hourly_rate} placeholder="Hourly Rate (£)" className="w-full border rounded-lg p-3" onChange={handleChange}/>
+        <input name="hourly_rate" type="number" step="0.01" value={formData.hourly_rate} placeholder="Hourly Rate (£)" className="mozo-input" onChange={handleChange}/>
 
-        <input name="contract_hours" type="number" value={formData.contract_hours} placeholder="Contract Hours" className="w-full border rounded-lg p-3" onChange={handleChange}/>
+        <input name="contract_hours" type="number" value={formData.contract_hours} placeholder="Contract Hours" className="mozo-input" onChange={handleChange}/>
 
-        <input name="holiday_allowance" type="number" value={formData.holiday_allowance} placeholder="Holiday Allowance" className="w-full border rounded-lg p-3" onChange={handleChange}/>
+        <input name="holiday_allowance" type="number" value={formData.holiday_allowance} placeholder="Holiday Allowance" className="mozo-input" onChange={handleChange}/>
         
-        <select name="status" value={formData.status} className="w-full border rounded-lg p-3" onChange={handleChange} aria-label="Status">
+        <select name="status" value={formData.status} className="mozo-select" onChange={handleChange} aria-label="Status">
           <option value="active">
             Active
           </option>
@@ -215,12 +211,12 @@ export default function EditEmployeePage() {
         </select>
 
         <div className="flex gap-3">
-          <button type="submit" disabled={saving} className="border rounded-lg px-5 py-3 font-medium">
+          <button type="submit" disabled={saving} className="mozo-btn mozo-btn-primary">
             {saving? 'Saving...': 'Save Changes'}
           </button>
 
           <button type="button" onClick={() => router.push('/admin/employees')}
-            className="border rounded-lg px-5 py-3">Cancel
+            className="mozo-btn mozo-btn-outline">Cancel
           </button>
         </div>
       </form>

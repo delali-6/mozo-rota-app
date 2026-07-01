@@ -349,28 +349,34 @@ export default function EmployeeProfilePage() {
   const usedHolidays = holidays.filter((holiday) => holiday.status === 'approved').reduce((total, holiday) => total + holiday.days_requested, 0)
   const remainingHolidayDays = employee ? employee.holiday_allowance - usedHolidays : 0
 
+  const getHolidayStatusClass = (status: string) => {
+    if (status === 'approved') return 'mozo-badge mozo-badge-completed'
+    if (status === 'rejected') return 'mozo-badge mozo-badge-cancelled'
+    return 'mozo-badge mozo-badge-scheduled'
+  }
+
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <div className="flex-justify-center text-2xl font-bold mb-4">
+    <div className="max-w-5xl mx-auto space-y-6">
+      <div className="flex items-start justify-between gap-4">
       <div>
-        <h1 className="text-3xl font-bold mb-6">{
+        <h1 className="mozo-title mb-1">{
           employee.first_name} {' '} {employee.last_name}
         </h1>
-        <p className="text-gray-500">{employee.role}</p>
+        <p className="mozo-subtitle">{employee.role}</p>
       </div>
 
       <button onClick={() => router.push(`/admin/employees/${employee.id}/edit`)}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+        className="mozo-btn mozo-btn-primary">
         Edit Employee
       </button>
       </div>
 
-      <div className="flex gap-2 mb-6 border-b pb-3">
+      <div className="mozo-card p-3 flex flex-wrap gap-2">
         {['profile', 'availability', 'shifts', 'holiday', 'notes'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded ${activeTab === tab ? 'bg-blue-500 text-white' : 'border border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+            className={`mozo-btn ${activeTab === tab ? 'mozo-btn-primary' : 'mozo-btn-outline'}`}
           >
             {tab}
           </button>
@@ -378,8 +384,8 @@ export default function EmployeeProfilePage() {
       </div>
 
       {activeTab === 'profile' && (
-        <div className="max-w-4xl mx-auto p-4">
-          <div className="max-w-4xl mx-auto p-4">
+        <div className="mozo-card p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <strong>Email:</strong> {' '} {employee.email}
             </div>
@@ -413,18 +419,18 @@ export default function EmployeeProfilePage() {
       )}
 
       {activeTab === 'availability' && (
-        <div className="max-w-4xl mx-auto p-4">
+        <div className="space-y-4">
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold mb-4">Availability</h2>
+            <h2 className="text-xl font-semibold">Availability</h2>
 
             
-              <div className="mb-6 border rounded-xl p-4 space-y-4">
+              <div className="mozo-card p-4 space-y-4">
 
                 <select
                   title="Select day of week"
                   value={newAvailability.days_of_week}
                   onChange={(e) => setNewAvailability({ ...newAvailability, days_of_week: e.target.value, })}
-                  className="border rounded-lg p-2"
+                  className="mozo-select"
                 >
                   <option value="Monday">Monday</option>
                   <option value="Tuesday">Tuesday</option>
@@ -435,9 +441,9 @@ export default function EmployeeProfilePage() {
                   <option value="Sunday">Sunday</option>
                 </select>
 
-                <input type="time" placeholder="Start Time" value={newAvailability.start_time} onChange={(e) => setNewAvailability({ ...newAvailability, start_time: e.target.value })} className="border rounded-lg p-2" />
+                <input type="time" placeholder="Start Time" value={newAvailability.start_time} onChange={(e) => setNewAvailability({ ...newAvailability, start_time: e.target.value })} className="mozo-input" />
 
-                <input type="time" placeholder="End Time" value={newAvailability.end_time} onChange={(e) => setNewAvailability({ ...newAvailability, end_time: e.target.value })} className="border rounded-lg p-2" />
+                <input type="time" placeholder="End Time" value={newAvailability.end_time} onChange={(e) => setNewAvailability({ ...newAvailability, end_time: e.target.value })} className="mozo-input" />
 
                 <label className="flex items-center gap-2">
                   <input type="checkbox" checked={newAvailability.available} onChange={(e) => setNewAvailability({ ...newAvailability, available: e.target.checked })} />
@@ -445,11 +451,11 @@ export default function EmployeeProfilePage() {
                 </label>
 
                 <div className="flex gap-2">
-                  <button onClick={saveAvailability} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                  <button onClick={saveAvailability} className="mozo-btn mozo-btn-primary">
                     {editingAvailabilityId ? 'Update Availability' : 'Add Availability'}
                   </button>
                   {editingAvailabilityId && (
-                    <button onClick={cancelAvailabilityEdit} className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+                    <button onClick={cancelAvailabilityEdit} className="mozo-btn mozo-btn-outline">
                       Cancel Edit
                     </button>
                   )}
@@ -457,29 +463,30 @@ export default function EmployeeProfilePage() {
               </div>
             
 
-              <table className="min-w-full border-collapse border border-gray-300">
+              <div className="mozo-table-wrap">
+              <table className="mozo-table min-w-full">
                 <thead>
                   <tr>
-                    <th className="border border-gray-300 p-2 text-left">Day</th>
-                    <th className="border border-gray-300 p-2 text-left">Start Time</th>
-                    <th className="border border-gray-300 p-2 text-left">End Time</th>
-                    <th className="border border-gray-300 p-2 text-left">Availability</th>
-                    <th className="border border-gray-300 p-2 text-left">Actions</th>
+                    <th>Day</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Availability</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {availability.map((item) => (
                     <tr key={item.id}>
-                      <td className="border border-gray-300 p-2">{item.days_of_week}</td>
-                      <td className="border border-gray-300 p-2">{item.start_time}</td>
-                      <td className="border border-gray-300 p-2">{item.end_time}</td>
-                      <td className="border border-gray-300 p-2">{item.available ? '✅Available' : '❌Not Available'}</td>
+                      <td>{item.days_of_week}</td>
+                      <td>{item.start_time}</td>
+                      <td>{item.end_time}</td>
+                      <td>{item.available ? 'Available' : 'Not Available'}</td>
                       
-                      <td className="border border-gray-300 space-x-2 p-2">
-                        <button onClick={() => editAvailability(item.id)} className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                      <td className="space-x-2">
+                        <button onClick={() => editAvailability(item.id)} className="mozo-btn mozo-btn-outline text-sm px-3 py-1">
                           Edit
                         </button>
-                        <button onClick={() => deleteAvailability(item.id)} className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                        <button onClick={() => deleteAvailability(item.id)} className="mozo-btn mozo-btn-danger text-sm px-3 py-1">
                           Delete
                         </button>
                       </td>
@@ -487,6 +494,7 @@ export default function EmployeeProfilePage() {
                   ))}
                 </tbody>
               </table>
+              </div>
           </div>
         </div>
       )}
@@ -498,77 +506,78 @@ export default function EmployeeProfilePage() {
       )}
 
       {activeTab === 'holiday' && (
-        <div className="max-w-4xl mx-auto p-4">
-          <div className="mb-6 border rounded-xl p-4 space-y-4">
-            <div>
+        <div className="space-y-6">
+          <div className="mozo-card p-4 space-y-4">
+            <div className="font-semibold">
               Holiday Summary
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="border rounded-lg p-4 text-center">
-                <p className="text-sm text-gray-500">Holiday Allowance</p>
+              <div className="mozo-card p-4 text-center">
+                <p className="text-sm mozo-subtitle">Holiday Allowance</p>
                 <p className="text-lg font-semibold">{employee.holiday_allowance} days</p>
               </div>
-              <div className="border rounded-lg p-4 text-center">
-                <p className="text-sm text-gray-500">Used Holidays</p>
+              <div className="mozo-card p-4 text-center">
+                <p className="text-sm mozo-subtitle">Used Holidays</p>
                 <p className="text-lg font-semibold">{usedHolidays} days</p>
               </div>
-              <div className="border rounded-lg p-4 text-center">
-                <p className="text-sm text-gray-500">Remaining Holidays</p>
+              <div className="mozo-card p-4 text-center">
+                <p className="text-sm mozo-subtitle">Remaining Holidays</p>
                 <p className="text-lg font-semibold">{remainingHolidayDays} days</p>
               </div>
             </div>
         </div>
-        <div className="border rounded-xl p-4 space-y-4">
+        <div className="mozo-card p-4 space-y-4">
           <h3 className="font-semibold">Request Holiday</h3>
           <label className="flex items-center gap-2">
             <span>Start Date:</span>
-            <input type="date" value={newHoliday.start_date} onChange={(e) => setNewHoliday({ ...newHoliday, start_date: e.target.value })} className="border rounded-lg p-2" />
+            <input type="date" value={newHoliday.start_date} onChange={(e) => setNewHoliday({ ...newHoliday, start_date: e.target.value })} className="mozo-input" />
           </label>
           <label className="flex items-center gap-2">
             <span>End Date:</span>
-            <input type="date" value={newHoliday.end_date} onChange={(e) => setNewHoliday({ ...newHoliday, end_date: e.target.value })} className="border rounded-lg p-2" />
+            <input type="date" value={newHoliday.end_date} onChange={(e) => setNewHoliday({ ...newHoliday, end_date: e.target.value })} className="mozo-input" />
           </label>
-          <textarea placeholder="Notes" value={newHoliday.notes} onChange={(e) => setNewHoliday({ ...newHoliday, notes: e.target.value })} className="border rounded-lg p-2 w-full" />
-          <button onClick={submitHoliday} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+          <textarea placeholder="Notes" value={newHoliday.notes} onChange={(e) => setNewHoliday({ ...newHoliday, notes: e.target.value })} className="mozo-textarea" />
+          <button onClick={submitHoliday} className="mozo-btn mozo-btn-primary">
             Submit Holiday Request
           </button>
         </div>
         <div>
           <h3 className="font-semibold mt-6">Previous Holiday Requests</h3>
           {holidays.length === 0 ? (
-            <p>No holiday requests found.</p>
+            <p className="mozo-subtitle">No holiday requests found.</p>
           ) : (
-            <table className="min-w-full border-collapse border border-gray-300 mt-2">
+            <div className="mozo-table-wrap mt-2">
+            <table className="mozo-table min-w-full">
               <thead>
                 <tr>
-                  <th className="border border-gray-300 p-2 text-left">Start Date</th>
-                  <th className="border border-gray-300 p-2 text-left">End Date</th>
-                  <th className="border border-gray-300 p-2 text-left">Days Requested</th>
-                  <th className="border border-gray-300 p-2 text-left">Status</th>
-                  <th className="border border-gray-300 p-2 text-left">Actions</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Days Requested</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {holidays.map((holiday) => (
                   <tr key={holiday.id}>
-                    <td className="border border-gray-300 p-2">{holiday.start_date}</td>
-                    <td className="border border-gray-300 p-2">{holiday.end_date}</td>
-                    <td className="border border-gray-300 p-2">{holiday.days_requested}</td>
-                    <td className="border border-gray-300 p-2">{holiday.status}</td>
-                    <td className="border border-gray-300 p-2">
+                    <td>{holiday.start_date}</td>
+                    <td>{holiday.end_date}</td>
+                    <td>{holiday.days_requested}</td>
+                    <td><span className={getHolidayStatusClass(holiday.status)}>{holiday.status}</span></td>
+                    <td>
                       <div className="flex gap-2">
-                        <button onClick={() => setEditingHoliday(holiday)} className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                        <button onClick={() => setEditingHoliday(holiday)} className="mozo-btn mozo-btn-outline text-sm px-3 py-1">
                           Edit
                         </button>
                         {holiday.status === 'pending' && (
                           <>
                       <div className="flex gap-2">
                           <button onClick= {() => updateHolidayStatus(holiday.id, 'approved')}
-                          className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600">
+                          className="mozo-btn mozo-btn-primary text-sm px-3 py-1">
                             Approve
                           </button>
                           <button onClick={() => updateHolidayStatus(holiday.id, 'rejected')}
-                          className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                          className="mozo-btn mozo-btn-danger text-sm px-3 py-1">
                             Reject
                           </button>
                         </div>
@@ -580,29 +589,32 @@ export default function EmployeeProfilePage() {
                 ))}
               </tbody>
             </table>
+            </div>
         )}
             {editingHoliday && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <h3 className="font-semibold mb-4">Edit Holiday Request</h3>
-                <label className="flex items-center gap-2">
-                  <span>Start Date:</span>
-                  <input type="date" value={editingHoliday.start_date} onChange={(e) => setEditingHoliday({ ...editingHoliday, start_date: e.target.value })} className="border rounded-lg p-2" />
+              <div className="fixed inset-0 flex items-center justify-center bg-black/50 p-4">
+                <div className="mozo-card p-6 w-full max-w-xl space-y-4">
+                <h3 className="font-semibold mb-2">Edit Holiday Request</h3>
+                <label className="block">
+                  <span className="mozo-field-label">Start Date</span>
+                  <input type="date" value={editingHoliday.start_date} onChange={(e) => setEditingHoliday({ ...editingHoliday, start_date: e.target.value })} className="mozo-input" />
                 </label>
-                <label className="flex items-center gap-2">
-                  <span>End Date:</span>
-                  <input type="date" value={editingHoliday.end_date} onChange={(e) => setEditingHoliday({ ...editingHoliday, end_date: e.target.value })} className="border rounded-lg p-2" />
+                <label className="block">
+                  <span className="mozo-field-label">End Date</span>
+                  <input type="date" value={editingHoliday.end_date} onChange={(e) => setEditingHoliday({ ...editingHoliday, end_date: e.target.value })} className="mozo-input" />
                 </label>
-                <label className="flex items-center gap-2">
-                  <span>Notes:</span>
-                  <textarea placeholder="Notes" value={editingHoliday.notes} onChange={(e) => setEditingHoliday({ ...editingHoliday, notes: e.target.value })} className="border rounded-lg p-2 w-full" />
+                <label className="block">
+                  <span className="mozo-field-label">Notes</span>
+                  <textarea placeholder="Notes" value={editingHoliday.notes} onChange={(e) => setEditingHoliday({ ...editingHoliday, notes: e.target.value })} className="mozo-textarea" />
                 </label>
-                <div className="flex gap-2 mt-4">
-                  <button onClick={saveHolidayEdit} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                <div className="flex gap-2 mt-2">
+                  <button onClick={saveHolidayEdit} className="mozo-btn mozo-btn-primary">
                     Save
                   </button>
-                  <button onClick={() => setEditingHoliday(null)} className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+                  <button onClick={() => setEditingHoliday(null)} className="mozo-btn mozo-btn-outline">
                     Cancel
                   </button>
+                </div>
                 </div>
               </div>
             )}
@@ -611,8 +623,8 @@ export default function EmployeeProfilePage() {
       )}
 
       {activeTab === 'notes' && (
-        <div className="max-w-4xl mx-auto p-4">
-          <p>Notes coming soon</p>
+        <div className="mozo-card p-4">
+          <p className="mozo-subtitle">Notes coming soon</p>
         </div>
       )}
     </div>

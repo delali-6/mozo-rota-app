@@ -1,8 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --mozo-primary: #8b5e3c;
+  --mozo-primary-dark: #5a3a22;
+  --mozo-primary-light: #c49a6c;
+  --mozo-beige: #f1e7da;
+  --mozo-bg: #faf7f2;
+  --mozo-white: #ffffff;
+  --mozo-black: #1a1a1a;
+  --mozo-text-secondary: #5c5c5c;
+  --mozo-border: #e5dccf;
+  --mozo-shadow: 0 12px 30px rgba(90, 58, 34, 0.08);
+
+  --background: var(--mozo-bg);
+  --foreground: var(--mozo-black);
 }
 
 @theme inline {
@@ -12,15 +23,207 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), "Segoe UI", sans-serif;
+}
+
+.mozo-page {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(196, 154, 108, 0.18), transparent 35%),
+    radial-gradient(circle at 100% 100%, rgba(139, 94, 60, 0.12), transparent 28%),
+    var(--mozo-bg);
+}
+
+.mozo-title {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  color: var(--mozo-black);
+}
+
+.mozo-subtitle {
+  color: var(--mozo-text-secondary);
+}
+
+.mozo-card {
+  background: var(--mozo-white);
+  border: 1px solid var(--mozo-border);
+  border-radius: 0.875rem;
+  box-shadow: var(--mozo-shadow);
+}
+
+.mozo-card-dark {
+  background: linear-gradient(135deg, var(--mozo-primary), var(--mozo-primary-dark));
+  color: var(--mozo-white);
+  border: 1px solid #4a2f1d;
+  border-radius: 0.875rem;
+  box-shadow: var(--mozo-shadow);
+}
+
+.mozo-field-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--mozo-black);
+}
+
+.mozo-input,
+.mozo-select,
+.mozo-textarea {
+  width: 100%;
+  border: 1px solid var(--mozo-border);
+  border-radius: 0.625rem;
+  background: var(--mozo-white);
+  color: var(--mozo-black);
+  padding: 0.55rem 0.75rem;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.mozo-input:focus,
+.mozo-select:focus,
+.mozo-textarea:focus {
+  outline: none;
+  border-color: var(--mozo-primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--mozo-primary) 22%, transparent);
+}
+
+.mozo-btn {
+  border-radius: 0.625rem;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  transition: transform 120ms ease, opacity 120ms ease, background-color 120ms ease, border-color 120ms ease;
+}
+
+.mozo-btn:active {
+  transform: translateY(1px);
+}
+
+.mozo-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.mozo-btn-primary {
+  background: linear-gradient(135deg, var(--mozo-primary), var(--mozo-primary-light));
+  color: var(--mozo-white);
+}
+
+.mozo-btn-primary:hover {
+  background: linear-gradient(135deg, var(--mozo-primary-dark), var(--mozo-primary));
+}
+
+.mozo-btn-outline {
+  border: 1px solid var(--mozo-primary);
+  color: var(--mozo-primary);
+  background: var(--mozo-white);
+}
+
+.mozo-btn-outline:hover {
+  background: color-mix(in oklab, var(--mozo-primary) 10%, white);
+}
+
+.mozo-btn-danger {
+  background: #bf3d24;
+  color: var(--mozo-white);
+}
+
+.mozo-btn-danger:hover {
+  background: #9f321d;
+}
+
+.mozo-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--mozo-border);
+  border-radius: 0.875rem;
+  background: var(--mozo-white);
+  box-shadow: var(--mozo-shadow);
+}
+
+.mozo-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+}
+
+.mozo-table thead {
+  background: linear-gradient(135deg, var(--mozo-primary), var(--mozo-primary-light));
+  color: var(--mozo-white);
+}
+
+.mozo-table th,
+.mozo-table td {
+  padding: 0.8rem 1rem;
+  font-size: 0.925rem;
+  border-bottom: 1px solid var(--mozo-border);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.mozo-table tbody tr:hover {
+  background: color-mix(in oklab, var(--mozo-primary-light) 14%, white);
+}
+
+.mozo-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.mozo-badge-scheduled {
+  background: color-mix(in oklab, var(--mozo-primary-light) 45%, white);
+  color: var(--mozo-primary-dark);
+}
+
+.mozo-badge-completed {
+  background: #dff0e0;
+  color: #315e34;
+}
+
+.mozo-badge-cancelled {
+  background: #f4d7d2;
+  color: #8a2f21;
+}
+
+.mozo-admin-shell {
+  min-height: 100vh;
+  display: flex;
+  background: var(--mozo-bg);
+}
+
+.mozo-admin-sidebar {
+  width: 16rem;
+  background:
+    radial-gradient(circle at 100% 100%, rgba(139, 94, 60, 0.32), transparent 35%),
+    linear-gradient(180deg, var(--mozo-black), #141311);
+  color: var(--mozo-white);
+  border-right: 1px solid #4a2f1d;
+  padding: 1.5rem;
+}
+
+.mozo-admin-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 0.625rem;
+  color: #efeae5;
+  padding: 0.6rem 0.75rem;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.mozo-admin-link:hover {
+  background: color-mix(in oklab, var(--mozo-primary) 22%, transparent);
+  color: var(--mozo-white);
+}
+
+.mozo-admin-main {
+  flex: 1;
+  padding: 1.5rem;
 }

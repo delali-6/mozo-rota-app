@@ -1,16 +1,17 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
-    LayoutDashboard,
+    House,
     Users,
-    CalendarDays,
-    PlusSquare,
+    Calendar,
+    Plus,
     Bell,
-    FileText,
+    Briefcase,
     LogOut,
-} from 'lucide-react'
+} from '@/lib/icons'
 import { supabase } from '@/lib/supabase'
 
 export default function AdminLayout({ children, }: { children: React.ReactNode }) {
@@ -22,63 +23,71 @@ export default function AdminLayout({ children, }: { children: React.ReactNode }
     }   
 
     return (
-        <div className="flex min-h-screen">
-            <aside className="w-64 bg-gray-800 text-white p-6">
+        <div className="mozo-admin-shell">
+            <aside className="mozo-admin-sidebar">
                 <div className="mb-8">
-                    <h1 className="text-2xl font-bold">
-                        Mozo Rota Admin
-                    </h1>
+                    <div className="mb-4 rounded-xl overflow-hidden">
+                        <Image
+                            src="/MozoLogo-v3.png"
+                            alt="Mozo Coffee logo"
+                            width={560}
+                            height={270}
+                            className="h-auto w-full object-cover"
+                            priority
+                        />
+                    </div>
 
-                    <p className="mb-4 text-gray-400">
+                    <h1 className="text-2xl font-bold text-[#C49A6C]">Mozo Rota Admin</h1>
+
+                    <p className="mb-4 text-[#E7DCCF]">
                         Manager Portal
                     </p>
                 </div>
 
                 <nav className="space-y-2">
-                    <Link href="/admin" className="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded">
-                        <LayoutDashboard size={20} />
+                    <Link href="/admin" className="mozo-admin-link">
+                        <House size={20} />
                         <span>Dashboard</span>
                     </Link>
 
-                    <Link href="/admin/employees" className="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded">
+                    <Link href="/admin/employees" className="mozo-admin-link">
                         <Users size={20} />
                         <span>Employees</span>
                     </Link>
 
-                    <Link href="/admin/rota" className="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded">
-                        <CalendarDays size={20} />
+                    <Link href="/admin/rota" className="mozo-admin-link">
+                        <Calendar size={20} />
                         <span>Weekly Rota</span>
                     </Link>
 
-                    <Link href="/admin/shifts" className="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded">
-                        <PlusSquare size={20} />
+                    <Link href="/admin/shifts" className="mozo-admin-link">
+                        <Plus size={20} />
                         <span>Shifts</span>
                     </Link>
 
-                    <Link href="/admin/announcements" className="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded">
+                    <Link href="/admin/announcements" className="mozo-admin-link">
                         <Bell size={20} />
                         <span>Announcements</span>
                     </Link>
 
-                    <Link href="/admin/policies" className="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded">
-                        <FileText size={20} />
+                    <Link href="/admin/policies" className="mozo-admin-link">
+                        <Briefcase size={20} />
                         <span>Policies</span>
                     </Link>
 
-                    <Link href="/admin/notifications" className="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded">
+                    <Link href="/admin/notifications" className="mozo-admin-link">
                         <Bell size={20} />
                         <span>Notifications</span>
                     </Link>
 
-                    <button onClick={handleLogout} className="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded">
+                    <button onClick={handleLogout} className="mozo-admin-link w-full text-left">
                         <LogOut size={20} />
                         <span>Logout</span>
                     </button>
                 </nav>
             </aside>
 
-            {/* Main content area */}
-            <main className="flex-1 p-6">
+            <main className="mozo-admin-main">
                 {children}
             </main>
         </div>

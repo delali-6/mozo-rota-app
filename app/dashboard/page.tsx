@@ -32,7 +32,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <main className="min-h-screen flex items-center justify-center">
-        <p className="text-lg">
+        <p className="text-lg mozo-subtitle">
           Loading...
         </p>
       </main>
@@ -40,15 +40,15 @@ export default function Dashboard() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <h1 className="text-3xl font-bold">
+    <main className="min-h-screen flex flex-col items-center justify-center gap-4">
+      <h1 className="mozo-title">
         Employee Dashboard
       </h1>
 
       <button onClick={async () => {
         await supabase.auth.signOut()
         router.push('/login')
-      }} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+      }} className="mozo-btn mozo-btn-primary">
         Log Out
       </button>
     </main>
