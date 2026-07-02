@@ -259,3 +259,48 @@ Step 10 ✅ Publish rota
 Expected Outcome: When the manager clicks on the Rota page, it should show a week selector and a table with the days of the week as columns and the employees as rows. The shifts should be displayed in the respective cells.
 
 Actual Outcome: The Rota page is working as expected, showing a week selector and a table with the days of the week as columns and the employees as rows. The shifts are displayed in the respective cells. I just modified the colours of the rota page to match the design system colours. The rota page now has a brown gradient for the day headers and a white background for the employee rows. The shifts are displayed in a light beige colour with black text. The availability and holiday warnings are displayed in red and yellow respectively.
+
+02/07/2026
+# Testing 20: Is the Rota page shift creation and edit working?
+Expected Outcome: When the manager clicks on an empty cell in the rota table, it should show a form to create a new shift with the employee and date pre-filled. When the form is submitted, it should add the new shift to the database and display it in the respective cell. When the manager clicks on an existing shift, it should show a form to edit the shift with the existing details filled in. When the form is submitted, it should update the shift in the database and display the updated information in the respective cell.
+
+Actual Outcome: The Rota page shift creation and edit is working as expected, showing a form to create a new shift with the employee and date pre-filled when an empty cell is clicked. When the form is submitted, it adds the new shift to the database and displays it in the respective cell. When an existing shift is clicked, it shows a form to edit the shift with the existing details filled in. When the form is submitted, it updates the shift in the database and displays the updated information in the respective cell.
+
+📈 My suggested roadmap for Mozo
+
+Phase 6 ✅
+Employee Management
+Holidays
+Availability
+Shifts
+Weekly Rota
+
+Phase 7
+⭐ Employee Portal
+⭐ Employee Dashboard
+⭐ Manager Dashboard improvements
+
+Phase 8
+Announcements
+Clock In / Clock Out
+PDF Rota Export
+
+Phase 9
+Timesheets
+Payroll Reports
+Email Notifications
+
+Phase 10
+Mobile-friendly UI
+Push Notifications
+Shift Swap Requests
+Premium scheduling features
+
+
+
+<button onClick={async () => {
+        await supabase.auth.signOut()
+        router.push('/login')
+      }} className="mozo-btn mozo-btn-primary">
+        Log Out
+      </button>

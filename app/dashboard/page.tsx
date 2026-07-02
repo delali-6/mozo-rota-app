@@ -1,14 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUserRole } from '@/lib/auth'
-import { supabase } from '@/lib/supabase'
+import { useEmployee } from './contexts/EmployeeContext'
 
 export default function Dashboard() {
   const router = useRouter()
-  const [loading, setLoading] =
-    useState(true)
+  const { employee, loading } = useEmployee()
 
   useEffect(() => {
     const checkRole = async () => {
@@ -23,8 +22,6 @@ export default function Dashboard() {
         router.push('/admin')
         return
       }
-
-      setLoading(false)
     }
     checkRole()
   }, [router])
@@ -39,18 +36,24 @@ export default function Dashboard() {
     )
   }
 
+const hour = new Date().getHours()
+
+const greeting =
+  hour < 12
+    ? "Good Morning"
+    : hour < 14
+    ? "Good Afternoon"
+    : "Good Evening"
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center gap-4">
       <h1 className="mozo-title">
         Employee Dashboard
       </h1>
 
-      <button onClick={async () => {
-        await supabase.auth.signOut()
-        router.push('/login')
-      }} className="mozo-btn mozo-btn-primary">
-        Log Out
-      </button>
+      <p className="text-lg mozo-subtitle">
+        ☕ {greeting}{employee ? `, ${employee.first_name}` : ''}!
+      </p>
     </main>
   )
 }
