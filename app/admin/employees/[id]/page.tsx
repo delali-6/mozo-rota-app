@@ -37,6 +37,7 @@ type holiday = {
   notes: string
 }
 
+// Detailed manager view for one employee, including profile, availability, and holiday admin tools.
 export default function EmployeeProfilePage() {
 
   const Params = useParams()
@@ -63,6 +64,7 @@ export default function EmployeeProfilePage() {
       })
   const [editingHoliday, setEditingHoliday] = useState<holiday | null>(null)
 
+  // Adds or updates recurring availability while preventing duplicate day records for the same employee.
   const saveAvailability = async () => {
     const existingRecord = availability.find(
       (item) =>
@@ -141,6 +143,7 @@ export default function EmployeeProfilePage() {
     })
   }
 
+  // Clears the availability edit form without changing saved records.
   const cancelAvailabilityEdit = () => {
     setEditingAvailabilityId(null)
     setNewAvailability({
@@ -152,6 +155,7 @@ export default function EmployeeProfilePage() {
   }
 
   useEffect(() => {
+    // Loads employee details plus related availability and holiday records for the tabbed profile view.
     const loadEmployee = async () => {
       setLoading(true)
 
@@ -215,6 +219,7 @@ export default function EmployeeProfilePage() {
     )
   }
 
+  // Copies an availability row into the form so it can be edited in place.
   const editAvailability = (id: string) => {
     const availabilityToEdit = availability.find((item) => item.id === id)
     if (!availabilityToEdit) return
@@ -228,6 +233,7 @@ export default function EmployeeProfilePage() {
     })
   }
 
+  // Removes one recurring availability row after confirmation.
   const deleteAvailability = async (id: string) => {
     const confirmed = window.confirm('Are you sure you want to delete this availability?')
     if (!confirmed) return
@@ -246,6 +252,7 @@ export default function EmployeeProfilePage() {
     setAvailability((prev) => prev.filter((item) => item.id !== id))
   }
 
+  // Creates a holiday request and calculates requested days from the selected date range.
   const submitHoliday = async () => {
     if (!newHoliday.start_date || !newHoliday.end_date) {
       alert('Please fill in both start and end dates.')
@@ -290,6 +297,7 @@ export default function EmployeeProfilePage() {
   }
   
 
+  // Lets managers approve, reject, or reset a holiday request.
   const updateHolidayStatus = async (holidayId: string, status: 'approved' | 'rejected' | 'pending') => {
     const { error } = await supabase
       .from('holidays')
@@ -307,6 +315,7 @@ export default function EmployeeProfilePage() {
     ))
   }
 
+  // Saves holiday date/note edits and returns the request to pending so it can be reviewed again.
   const saveHolidayEdit = async () => {
     if (!editingHoliday) return
 
@@ -346,9 +355,11 @@ export default function EmployeeProfilePage() {
       setEditingHoliday(null)
   }
 
+  // Holiday summary is calculated from approved requests only.
   const usedHolidays = holidays.filter((holiday) => holiday.status === 'approved').reduce((total, holiday) => total + holiday.days_requested, 0)
   const remainingHolidayDays = employee ? employee.holiday_allowance - usedHolidays : 0
 
+  // Maps holiday workflow status onto shared badge styles.
   const getHolidayStatusClass = (status: string) => {
     if (status === 'approved') return 'mozo-badge mozo-badge-completed'
     if (status === 'rejected') return 'mozo-badge mozo-badge-cancelled'

@@ -2,6 +2,7 @@
 
 import Card from './Card'
 
+// Static holiday balance card kept for reuse when holiday data is connected to the dashboard again.
 export default function HolidayCard() {
 
     return (

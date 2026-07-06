@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase';
 
+// Employee portal shell: desktop sidebar, mobile bottom navigation, and shared employee context.
 export default function DashboardLayout({
   children,
 }: {
@@ -28,6 +29,7 @@ export default function DashboardLayout({
   const pathname = usePathname()
   const router = useRouter()
 
+    // Full desktop navigation keeps every employee route visible on larger screens.
     const links = [
     {
       name: 'Dashboard',
@@ -56,6 +58,7 @@ export default function DashboardLayout({
     },
   ]
 
+  // Compact mobile tabs keep the highest-frequency employee actions within thumb reach.
   const bottomLinks = [
     {
       name: 'Home',
@@ -81,6 +84,7 @@ export default function DashboardLayout({
     },
   ]
 
+  // Lower-frequency mobile actions live behind the More menu to keep the nav short.
   const menuLinks = [
     {
       name: 'Profile',
@@ -95,6 +99,7 @@ export default function DashboardLayout({
     },
   ]
 
+  // Planned items are shown disabled so the menu shape is ready before those routes exist.
   const inactiveMenuItems = [
     {
       name: 'Messages',
@@ -108,6 +113,7 @@ export default function DashboardLayout({
 
   const menuActive = menuLinks.some((link) => pathname === link.href)
 
+    // Signs out from Supabase and returns the user to the login screen.
     const handleLogout = async () => {
         await supabase.auth.signOut()
         router.push('/login')

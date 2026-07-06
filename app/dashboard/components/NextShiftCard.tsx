@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { CalendarDays } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useEmployee } from '../contexts/EmployeeContext'
@@ -13,19 +13,17 @@ type Shift = {
   shift_role: string
 }
 
+// Shows the next upcoming assigned shift for the logged-in employee.
 export default function NextShiftCard() {
   const { employee } = useEmployee()
 
   const [shift, setShift] = useState<Shift | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  // Queries the nearest future shift so the dashboard can show the employee's next rota item.
+  const loadShift = useCallback(async () => {
     if (!employee) return
 
-    loadShift()
-  }, [employee])
-
-  const loadShift = async () => {
     const today = new Date().toISOString().split('T')[0]
 
     const { data, error } = await supabase
@@ -44,7 +42,15 @@ export default function NextShiftCard() {
 
     setShift(data)
     setLoading(false)
-  }
+  }, [employee])
+
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      void loadShift()
+    }, 0)
+
+    return () => window.clearTimeout(id)
+  }, [loadShift])
 
   return (
     <div className="bg-white rounded-2xl shadow-md border border-[#E8DDD2] p-6 hover:shadow-lg transition">

@@ -7,6 +7,7 @@ import OpenShiftsCard from './components/OpenShiftsCard'
 import NotificationsCard from './components/NotificationsCard'
 import QuickActions from './components/QuickActions'
 
+// Main employee dashboard overview. Cards are composed from smaller data-backed widgets.
 export default function Dashboard() {
 
     return (

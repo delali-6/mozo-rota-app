@@ -5,6 +5,7 @@ type Props = {
     children: React.ReactNode
 }
 
+// Full-width card action link used inside dashboard preview cards.
 export default function CardButton({
     href,
     children,

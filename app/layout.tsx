@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   description: "Mozo Coffee rota and shift management",
 };
 
+// Root shell for the whole app. It applies shared fonts and the global Mozo page background.
 export default function RootLayout({
   children,
 }: Readonly<{

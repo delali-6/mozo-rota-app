@@ -28,6 +28,7 @@ type EmployeeContextType = {
 
 const EmployeeContext = createContext<EmployeeContextType | undefined>(undefined)
 
+// Provides the logged-in employee record to all employee dashboard pages and cards.
 export function EmployeeProvider({
     children,
 }: {
@@ -38,6 +39,7 @@ export function EmployeeProvider({
 
     const [loading, setLoading] = useState(true)
 
+    // Refreshes employee profile data after login or when a child page changes employee-owned data.
     const refreshEmployee = async () => {
 
         setLoading(true)
@@ -76,6 +78,7 @@ export function EmployeeProvider({
 
 }
 
+// Convenience hook that keeps employee-only UI from being used outside the provider.
 export function useEmployee() {
 
     const context = useContext(EmployeeContext)

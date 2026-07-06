@@ -1,6 +1,6 @@
-/// Create Route Guard Helper 
 import { supabase } from './supabase'
 
+// Looks up the signed-in user's employee role so route guards can send managers and employees to the right portal.
 export async function getCurrentUserRole() {
   const { data: { user }, } = await supabase.auth.getUser()
 
@@ -18,6 +18,7 @@ export async function getCurrentUserRole() {
   return employee?.role || null
 }
 
+// Returns the full employee record linked to the current Supabase auth user.
 export async function getCurrentEmployee() {
   const {
     data: { user },

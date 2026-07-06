@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Flame, Clock3, CalendarDays } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
@@ -18,16 +18,14 @@ type OpenShift = {
   shift_role: string
 }
 
+// Previews the next available open shifts employees can request from the dashboard.
 export default function OpenShiftsCard() {
 
   const [shifts, setShifts] = useState<OpenShift[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    loadOpenShifts()
-  }, [])
-
-  const loadOpenShifts = async () => {
+  // Loads a small set of upcoming open shifts for the carousel preview.
+  const loadOpenShifts = useCallback(async () => {
 
     const today = new Date().toISOString().split('T')[0]
 
@@ -52,7 +50,15 @@ export default function OpenShiftsCard() {
 
     setShifts(data || [])
     setLoading(false)
-  }
+  }, [])
+
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      void loadOpenShifts()
+    }, 0)
+
+    return () => window.clearTimeout(id)
+  }, [loadOpenShifts])
 
   return (
 

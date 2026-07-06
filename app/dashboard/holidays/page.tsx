@@ -1,3 +1,4 @@
+// Employee holiday route placeholder. Future work can connect this to holiday requests and balances.
 export default function HolidaysPage() {
   return (
     <div>

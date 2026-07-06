@@ -24,6 +24,7 @@ const emptyShift: NewShift = {
   status: 'scheduled',
 }
 
+// Admin shift management page for creating, viewing, and deleting assigned or open shifts.
 export default function ShiftsPage() {
   const [newShift, setNewShift] = useState<NewShift>(emptyShift)
   const [shifts, setShifts] = useState<Shift[]>([])
@@ -33,6 +34,7 @@ export default function ShiftsPage() {
   const [formError, setFormError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
+  // Active employees populate the assigned-shift dropdown.
   const loadEmployees = async () => {
     const { data, error } = await supabase
       .from('employees')
@@ -47,6 +49,7 @@ export default function ShiftsPage() {
     setEmployees(data || [])
   }
 
+  // Loads shifts with employee names for the management table.
   const loadShifts = async () => {
     const { data, error } = await supabase
       .from('shifts')
@@ -75,6 +78,7 @@ export default function ShiftsPage() {
     loadData()
   }, [])
 
+  // Validates the form and inserts a new shift record into Supabase.
   const createShift = async () => {
     setFormError(null)
 
@@ -117,6 +121,7 @@ export default function ShiftsPage() {
     await loadShifts()
   }
 
+  // Deletes a shift after manager confirmation, then refreshes the table.
   const deleteShift = async (id: string) => {
     const confirmed = window.confirm('Are you sure you want to delete this shift?')
     if (!confirmed) return

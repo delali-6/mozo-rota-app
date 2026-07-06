@@ -2,6 +2,7 @@ type Props = {
     children: React.ReactNode
 }
 
+// Small pill used for labels such as roles, statuses, and other compact metadata.
 export default function StatBadge({
     children,
 }: Props) {

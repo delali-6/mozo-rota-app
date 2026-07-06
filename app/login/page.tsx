@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 
+// Handles employee and manager sign-in, then routes users to the correct portal for their role.
 export default function LoginPage() {
   const [email, setEmail] =
     useState('')
@@ -16,6 +17,7 @@ export default function LoginPage() {
 
   const router = useRouter()
 
+  // Authenticates against Supabase, reads the linked employee role, and redirects after login.
   const handleLogin = async (
     e: React.FormEvent
   ) => {

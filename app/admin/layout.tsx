@@ -14,9 +14,11 @@ import {
 } from '@/lib/icons'
 import { supabase } from '@/lib/supabase'
 
+// Manager portal shell with persistent admin navigation and Supabase sign-out.
 export default function AdminLayout({ children, }: { children: React.ReactNode }) {
     const router = useRouter()
 
+    // Ends the manager session and sends them back to the shared login page.
     const handleLogout = async () => {
         await supabase.auth.signOut()
         router.push('/login')

@@ -1,3 +1,4 @@
+// Open shifts listing placeholder. The dashboard card already previews available shifts.
 export default function OpenShiftsPage() {
 
   return (

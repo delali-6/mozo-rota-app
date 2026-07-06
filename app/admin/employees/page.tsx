@@ -20,6 +20,7 @@ type Employee = {
   status: string
 }
 
+// Manager employee directory with search, status filtering, editing, and soft-archive actions.
 export default function EmployeesPage() {
   const router = useRouter()
   const [employees, setEmployees] = useState<Employee[]>([])
@@ -29,6 +30,7 @@ export default function EmployeesPage() {
   const [statusFilter, setStatusFilter] = useState('all')
 
   useEffect(() => {
+    // Loads the full employee directory once for client-side searching and filtering.
     const fetchEmployees = async () => {
       setLoading(true)
       const { data, error } = await supabase.from('employees').select('*').order('first_name', { ascending: true })
@@ -43,17 +45,20 @@ export default function EmployeesPage() {
     fetchEmployees()
   }, [])
 
+  // Search matches either the employee's full name or email address.
   const filteredEmployees = employees.filter((employee) => {
     const fullName = `${employee.first_name} ${employee.last_name}`.toLowerCase()
     return fullName.includes(search.toLowerCase()) || employee.email.toLowerCase().includes(search.toLowerCase())
   })
 
+  // Status tabs apply after search so the table always reflects both controls.
   const visibleEmployees = filteredEmployees.filter((employee) => {
     if (statusFilter === 'all') return true
 
     return employee.status === statusFilter
   })
 
+  // Soft-archives employees by setting status inactive rather than deleting staff records.
   const archiveEmployee = async (id: string) => {
     const confirmed = window.confirm('Are you sure you want to archive this employee?')
     if (!confirmed) return
@@ -71,6 +76,7 @@ export default function EmployeesPage() {
     )
   }
 
+  // Reuses shared badge styles to make active/inactive state obvious in the table.
   const getStatusBadgeClass = (status: string) => {
     if (status === 'active') return 'mozo-badge mozo-badge-completed'
     return 'mozo-badge mozo-badge-cancelled'

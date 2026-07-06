@@ -21,6 +21,7 @@ type Shift = {
   shift_role: string
 }
 
+// Weekly rota planner for managers. Click empty cells to create shifts and existing shifts to edit them.
 export default function RotaPage() {
 
   const router = useRouter()
@@ -39,6 +40,7 @@ export default function RotaPage() {
   })
   const [saving, setSaving] = useState(false)
 
+  // Loads active employees so the rota grid only includes staff who can be scheduled.
   const loadEmployees = async () => {
     const { data, error } = await supabase
       .from('employees')
@@ -54,6 +56,7 @@ export default function RotaPage() {
     setEmployees(data || [])
   }
 
+  // Loads all shifts so each employee/day cell can display assigned rota items.
   const loadShifts = async () => {
     const { data, error } = await supabase
       .from('shifts')
@@ -77,6 +80,7 @@ export default function RotaPage() {
       return () => window.clearTimeout(id)
     }, [])
 
+    // Opens the create drawer prefilled with the clicked employee, date, and default shift times.
     const openCreateShift = (employee: Employee, date: Date) => {
       setSelectedEmployee(employee)
       setSelectedDate(date)
@@ -90,10 +94,12 @@ export default function RotaPage() {
       setShowCreateModal(true)
     }
 
+    // Existing rota cards route to the dedicated shift edit screen.
     const openEditShift = (shiftId: string) => {
       router.push(`/admin/shifts/edit/${shiftId}`)
     }
 
+    // Persists the drawer form as a scheduled shift, then refreshes the rota grid.
     const saveShift = async () => {
       if (!selectedEmployee || !selectedDate) return
 
@@ -135,6 +141,7 @@ export default function RotaPage() {
       }
     }
 
+    // The rota always uses Monday as the first day of the displayed week.
     const weekStart = startOfWeek(currentWeek, {
         weekStartsOn: 1,
     })

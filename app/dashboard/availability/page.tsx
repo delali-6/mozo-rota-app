@@ -1,3 +1,4 @@
+// Employee availability route placeholder. Future work can let staff update recurring availability here.
 export default function AvailabilityPage() {
   return (
     <div>

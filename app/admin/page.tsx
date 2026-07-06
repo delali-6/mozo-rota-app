@@ -1,3 +1,4 @@
+// Manager dashboard overview. Current figures are placeholders until reporting queries are added.
 export default function AdminPage() {
   return (
     <div>

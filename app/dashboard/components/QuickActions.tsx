@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 
+// Shortcut links for the most common employee dashboard tasks.
 export default function QuickActions() {
 
     return (

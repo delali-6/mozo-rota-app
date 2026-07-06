@@ -7,6 +7,7 @@ type Props = {
     actionHref?: string
 }
 
+// Shared card heading row with an optional action link to the full page.
 export default function SectionHeader({
     title,
     icon,

@@ -5,6 +5,7 @@ type CardProps = {
     className?: string
 }
 
+// Shared dashboard card wrapper with Mozo styling and the coffee accent strip.
 export default function Card({
     children,
     className = '',

@@ -35,6 +35,7 @@ const emptyShift: Shift = {
   status: 'scheduled',
 }
 
+// Admin editor for an existing shift, including assignment, timing, notes, and status.
 export default function EditShiftPage() {
   const params = useParams()
   const router = useRouter()
@@ -46,6 +47,7 @@ export default function EditShiftPage() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
+    // Loads active employees and the selected shift together so the form can render fully populated.
     const loadData = async () => {
       const [{ data: employeeData, error: employeeError }, { data: shiftData, error: shiftError }] = await Promise.all([
         supabase
@@ -77,6 +79,7 @@ export default function EditShiftPage() {
     loadData()
   }, [params.id])
 
+  // Saves the edited shift back to Supabase and returns to the shift list on success.
   async function updateShift() {
     setSaving(true)
 

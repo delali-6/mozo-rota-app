@@ -23,10 +23,12 @@ type Props = {
   deleteShift: (id: string) => void
 }
 
+// Displays the manager shift list with edit/delete actions and status styling.
 export default function ShiftTable({
   shifts,
   deleteShift,
 }: Props) {
+  // Maps backend shift status values onto the shared badge styles.
   const getStatusBadgeClass = (status: string) => {
     if (status === 'completed') return 'mozo-badge mozo-badge-completed'
     if (status === 'cancelled') return 'mozo-badge mozo-badge-cancelled'

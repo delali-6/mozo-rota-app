@@ -2,6 +2,7 @@
 
 import Card from './Card'
 
+// Notification placeholder card for announcements, holiday updates, and rota alerts.
 export default function NotificationsCard() {
 
     return (

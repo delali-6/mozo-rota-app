@@ -10,6 +10,7 @@ type CarouselProps = {
     showArrows?: boolean
 }
 
+// Horizontal carousel used for compact card previews, such as open shifts on the dashboard.
 export default function Carousel({
     children,
     showDots = true,
@@ -25,14 +26,17 @@ export default function Carousel({
     const [selectedIndex, setSelectedIndex] = useState(0)
     const [scrollSnaps, setScrollSnaps] = useState<number[]>([])
 
+    // Moves to the previous Embla snap when desktop arrows are shown.
     const scrollPrev = useCallback(() => {
         if (emblaApi) emblaApi.scrollPrev()
     }, [emblaApi])
 
+    // Moves to the next Embla snap when desktop arrows are shown.
     const scrollNext = useCallback(() => {
         if (emblaApi) emblaApi.scrollNext()
     }, [emblaApi])
 
+    // Lets pagination dots jump directly to a carousel item.
     const scrollTo = useCallback(
         (index: number) => {
             if (emblaApi) emblaApi.scrollTo(index)
@@ -40,6 +44,7 @@ export default function Carousel({
         [emblaApi]
     )
 
+    // Keeps dot state synchronized with drag, arrow, and programmatic carousel movement.
     const onSelect = useCallback(() => {
         if (!emblaApi) return
 
@@ -50,13 +55,20 @@ export default function Carousel({
 
         if (!emblaApi) return
 
-        setScrollSnaps(emblaApi.scrollSnapList())
-
-        onSelect()
+        const initCarouselState = window.setTimeout(() => {
+            setScrollSnaps(emblaApi.scrollSnapList())
+            onSelect()
+        }, 0)
 
         emblaApi.on('select', onSelect)
 
         emblaApi.on('reInit', onSelect)
+
+        return () => {
+            window.clearTimeout(initCarouselState)
+            emblaApi.off('select', onSelect)
+            emblaApi.off('reInit', onSelect)
+        }
 
     }, [emblaApi, onSelect])
 

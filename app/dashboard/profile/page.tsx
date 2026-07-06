@@ -1,3 +1,4 @@
+// Employee profile route placeholder for personal details and account settings.
 export default function ProfilePage() {
   return (
     <div>

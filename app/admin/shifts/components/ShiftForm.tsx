@@ -28,6 +28,7 @@ type Props = {
   formError: string | null
 }
 
+// Controlled form for creating assigned shifts or open shifts from the admin shift page.
 export default function ShiftForm({
   employees,
   newShift,
@@ -65,6 +66,7 @@ export default function ShiftForm({
               setNewShift({
                 ...newShift,
                 is_open_shift: e.target.value === 'open',
+                // Open shifts are not tied to a specific employee until someone requests/claims them.
                 employee_id:
                   e.target.value === 'open'
                     ? ''

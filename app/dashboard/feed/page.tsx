@@ -2,6 +2,7 @@
 
 import NotificationsCard from '../components/NotificationsCard'
 
+// Employee feed groups announcements, offers, and notification-style updates in one small-screen route.
 export default function FeedPage() {
   return (
     <main className="space-y-6">

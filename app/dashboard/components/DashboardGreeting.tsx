@@ -2,12 +2,14 @@
 
 import { useEmployee } from '../contexts/EmployeeContext'
 
+// Personalized dashboard greeting based on the current employee and local time of day.
 export default function DashboardGreeting() {
 
     const { employee } = useEmployee()
 
     const hour = new Date().getHours()
 
+    // Keeps greeting copy friendly without needing server data.
     const greeting =
         hour < 12
             ? 'Good Morning'

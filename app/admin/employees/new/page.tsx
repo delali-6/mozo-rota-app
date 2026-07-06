@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
+// Manager form for creating a new employee profile used by rota, holiday, and auth role lookups.
 export default function NewEmployeePage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -22,6 +23,7 @@ export default function NewEmployeePage() {
     status: 'active',
   })
 
+  // Generic field updater keeps the many employee form inputs controlled from one state object.
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
@@ -29,6 +31,7 @@ export default function NewEmployeePage() {
     })
   }
 
+  // Converts numeric form values before inserting the employee record into Supabase.
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)

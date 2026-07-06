@@ -7,6 +7,7 @@ import {
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
+// Manager form for updating an existing employee's HR and account details.
 export default function EditEmployeePage() {
   const router =
     useRouter()
@@ -39,6 +40,7 @@ export default function EditEmployeePage() {
     })
 
   useEffect(() => {
+    // Fetches the employee being edited and normalizes nullable database values for controlled inputs.
     const fetchEmployee =
       async () => {
         const {
@@ -101,6 +103,7 @@ export default function EditEmployeePage() {
     fetchEmployee()
   }, [employeeId])
 
+  // Shared updater for all text, number, and select inputs in the edit form.
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement
@@ -113,6 +116,7 @@ export default function EditEmployeePage() {
     })
   }
 
+  // Saves edited form data back to Supabase, converting numeric strings to numbers first.
   const handleSubmit =
     async (
       e: React.FormEvent
@@ -121,7 +125,7 @@ export default function EditEmployeePage() {
 
       setSaving(true)
 
-      const { data, error } =
+      const { error } =
         await supabase.from('employees').update({...formData, hourly_rate: Number(formData.hourly_rate), contract_hours: Number(formData.contract_hours), holiday_allowance: Number(formData.holiday_allowance)}).eq('id', employeeId).select()
 
       if (error) {

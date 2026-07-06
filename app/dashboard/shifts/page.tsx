@@ -32,6 +32,7 @@ type Shift = {
 
 const weekdayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
+// Employee schedule calendar. It fetches only the shifts inside the visible week or month.
 export default function ShiftsPage() {
   const { employee, loading: employeeLoading } = useEmployee()
   const [calendarMode, setCalendarMode] = useState<CalendarMode>('week')
@@ -39,6 +40,7 @@ export default function ShiftsPage() {
   const [shifts, setShifts] = useState<Shift[]>([])
   const [loading, setLoading] = useState(false)
 
+  // The query range follows the selected view so Supabase only returns shifts currently on screen.
   const range = useMemo(() => {
     if (calendarMode === 'week') {
       const start = startOfWeek(viewDate, { weekStartsOn: 1 })
@@ -55,6 +57,7 @@ export default function ShiftsPage() {
     }
   }, [calendarMode, viewDate])
 
+  // Calendar cells are derived from the visible range, including leading/trailing month days.
   const days = useMemo(
     () =>
       eachDayOfInterval({
@@ -69,6 +72,7 @@ export default function ShiftsPage() {
 
     if (!employee) return
 
+    // Loads this employee's shifts for the active rota range whenever the view changes.
     const loadShifts = async () => {
       setLoading(true)
 
@@ -99,18 +103,21 @@ export default function ShiftsPage() {
       ? `${format(range.start, 'd MMM')} - ${format(range.end, 'd MMM yyyy')}`
       : format(viewDate, 'MMMM yyyy')
 
+  // Moves the calendar backward by one week or one month depending on the active tab.
   const moveBack = () => {
     setViewDate((current) =>
       calendarMode === 'week' ? subWeeks(current, 1) : subMonths(current, 1)
     )
   }
 
+  // Moves the calendar forward by one week or one month depending on the active tab.
   const moveForward = () => {
     setViewDate((current) =>
       calendarMode === 'week' ? addWeeks(current, 1) : addMonths(current, 1)
     )
   }
 
+  // Groups fetched shifts into the matching calendar day cell.
   const getShiftsForDay = (day: Date) => {
     const dayKey = format(day, 'yyyy-MM-dd')
 
