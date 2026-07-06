@@ -19,6 +19,7 @@ type Shift = {
   break_minutes: number
   shift_role: string
   notes: string
+  is_open_shift: boolean
   status: string
 }
 
@@ -30,6 +31,7 @@ const emptyShift: Shift = {
   break_minutes: 0,
   shift_role: '',
   notes: '',
+  is_open_shift: false,
   status: 'scheduled',
 }
 

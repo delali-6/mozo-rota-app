@@ -20,6 +20,7 @@ const emptyShift: NewShift = {
   break_minutes: 0,
   shift_role: '',
   notes: '',
+  is_open_shift: false,
   status: 'scheduled',
 }
 
@@ -99,7 +100,8 @@ export default function ShiftsPage() {
       break_minutes: newShift.break_minutes,
       shift_role: newShift.shift_role,
       notes: newShift.notes,
-      status: 'scheduled',
+      is_open_shift: newShift.is_open_shift,
+      status: newShift.status,
     })
 
     setSaving(false)

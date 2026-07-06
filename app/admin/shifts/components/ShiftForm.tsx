@@ -16,6 +16,7 @@ export type NewShift = {
   shift_role: string
   notes: string
   status: string
+  is_open_shift: boolean
 }
 
 type Props = {
@@ -35,6 +36,8 @@ export default function ShiftForm({
   saving,
   formError,
 }: Props) {
+
+
   return (
     <div className="mozo-card p-6">
 
@@ -49,16 +52,56 @@ export default function ShiftForm({
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+
+          <label className="mozo-field-label">
+            Shift Type
+          </label>
+
+          <select
+            className="mozo-select"
+            value={newShift.is_open_shift ? 'open' : 'assigned'}
+            onChange={(e) =>
+              setNewShift({
+                ...newShift,
+                is_open_shift: e.target.value === 'open',
+                employee_id:
+                  e.target.value === 'open'
+                    ? ''
+                    : newShift.employee_id,
+              })
+            }
+            aria-label="Select shift type"
+          >
+
+            <option value="assigned">
+              Assigned Shift
+            </option>
+
+            <option value="open">
+              Open Shift
+            </option>
+
+          </select>
+
+        </div>
 
         {/* Employee */}
 
+        {!newShift.is_open_shift && (
+
         <div>
+
           <label className="mozo-field-label">
             Employee
           </label>
 
           <select
-            className={`mozo-select ${newShift.employee_id ? 'text-[var(--mozo-black)]' : 'text-[var(--mozo-text-secondary)]'}`}
+            className={`mozo-select ${
+              newShift.employee_id
+                ? 'text-[var(--mozo-black)]'
+                : 'text-[var(--mozo-text-secondary)]'
+            }`}
             value={newShift.employee_id}
             onChange={(e) =>
               setNewShift({
@@ -67,23 +110,35 @@ export default function ShiftForm({
               })
             }
             aria-label="Select employee"
-            required
           >
-            <option value="" disabled hidden className="text-[var(--mozo-text-secondary)]">
+
+            <option
+              value=""
+              disabled
+              hidden
+              className="text-[var(--mozo-text-secondary)]"
+            >
               Select employee
             </option>
 
             {employees.map((employee) => (
+
               <option
                 key={employee.id}
                 value={employee.id}
-                className="bg-white text-[var(--mozo-black)]"
               >
+
                 {employee.first_name} {employee.last_name}
+
               </option>
+
             ))}
+
           </select>
+
         </div>
+
+        )}
 
         {/* Date */}
 

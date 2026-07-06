@@ -297,10 +297,6 @@ Shift Swap Requests
 Premium scheduling features
 
 
+06/07/2026 - Phase 7 - Reusable UI Components
 
-<button onClick={async () => {
-        await supabase.auth.signOut()
-        router.push('/login')
-      }} className="mozo-btn mozo-btn-primary">
-        Log Out
-      </button>
+const { employee, loading } = useEmployee()
