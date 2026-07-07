@@ -192,6 +192,7 @@ export default function DashboardLayout({
       </main>
 
       <nav
+        id="mobile-navigation"
         aria-label="Employee mobile navigation"
         className="fixed inset-x-3 bottom-3 z-50 rounded-2xl border border-[#E5DCCF] bg-white/95 p-2 shadow-[0_16px_40px_rgba(90,58,34,0.18)] backdrop-blur md:hidden"
       >

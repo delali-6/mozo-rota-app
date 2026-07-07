@@ -299,4 +299,15 @@ Premium scheduling features
 
 06/07/2026 - Phase 7 - Reusable UI Components
 
-const { employee, loading } = useEmployee()
+# Testing 21: Is the Employee Dashboard working?
+Expected Outcome: When an employee logs in, they should be redirected to their dashboard which shows their upcoming shifts, availability, holiday balance, and any announcements. They should also be able to have access to the bottom navigation bar to navigate to their profile, availability, holiday request pages, other pages.
+
+Actual Outcome: The Employee Dashboard is working as expected, showing the upcoming shifts, availability, holiday balance, and any announcements. The bottom navigation bar is also working as expected, allowing the employee to navigate to their profile, availability, holiday request pages, and other pages.
+
+# Testing 22: Is the Shift page working for employees?
+Expected Outcome: When an employee clicks on the Shift page, it should show a calendar view of their shifts for the week and month with filter options. They should be able to click on a shift to view the details of the shift at the bottom of the screen.
+
+Actual Outcome: The Shift page is working as expected, showing a calendar view of the shifts for the week and month with filter options. When a shift is clicked, it shows the details of the shift at the bottom of the screen.
+
+# Testing 23: Is the Holiday Request page working for employees?
+Expected Outcome: When an employee clicks on the Holiday Request page, it should show a form to request a holiday with the necessary fields. When the form is submitted, it should add the holiday request to the database and show it in the list of holiday requests for the employee.
