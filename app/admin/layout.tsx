@@ -7,11 +7,12 @@ import {
     House,
     Users,
     Calendar,
+    CalendarHeart,
     Plus,
     Bell,
     Briefcase,
     LogOut,
-} from '@/lib/icons'
+} from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 // Manager portal shell with persistent admin navigation and Supabase sign-out.
@@ -65,6 +66,11 @@ export default function AdminLayout({ children, }: { children: React.ReactNode }
                     <Link href="/admin/shifts" className="mozo-admin-link">
                         <Plus size={20} />
                         <span>Shifts</span>
+                    </Link>
+
+                    <Link href="/admin/holiday-requests" className="mozo-admin-link">
+                        <CalendarHeart size={20} />
+                        <span>Holidays</span>
                     </Link>
 
                     <Link href="/admin/announcements" className="mozo-admin-link">

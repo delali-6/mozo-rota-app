@@ -60,10 +60,10 @@ export default function LoginPage() {
     if (
       employee?.role === 'manager'
     )
-      router.push('/admin')
+      router.replace('/admin')
 
     else {
-      router.push('/dashboard')
+      router.replace('/dashboard')
     }
 
     setLoading(false)

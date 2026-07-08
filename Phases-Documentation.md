@@ -311,3 +311,11 @@ Actual Outcome: The Shift page is working as expected, showing a calendar view o
 
 # Testing 23: Is the Holiday Request page working for employees?
 Expected Outcome: When an employee clicks on the Holiday Request page, it should show a form to request a holiday with the necessary fields. When the form is submitted, it should add the holiday request to the database and show it in the list of holiday requests for the employee.
+
+08/07/2026
+# Testing 24: Is the Holiday Request page section working for employees?
+Expected Outcome: When employee submit a holiday request, it should show the request in the list of holiday requests for the employee with the status of 'Pending'. When the manager approves or rejects the request, it should update the status in the list of holiday requests for the employee.
+
+Actual Outcome: The Holiday Request page section kept returning as 'You haven't submitted any holiday request'. After much investigation, I found out that somehow I had navigated into the manager' portal so everytime an employee submitted a holiday request, it came up as null. So what i did was to go back to the login page and log in as an employee, and it showed up🤩. I also had to tighten route guard in the /login/page.tsx to prevent more of that.
+
+Phase 8 - Open Shift Marketplace

@@ -32,7 +32,7 @@ export async function getCurrentEmployee() {
     .from('employees')
     .select('*')
     .eq('auth_user_id', user.id)
-    .single()
+    .maybeSingle()
 
   if (error) {
     console.error(error)

@@ -1,20 +1,27 @@
 // Employee holiday route placeholder. Future work can connect this to holiday requests and balances.
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
 import { useEmployee } from '../contexts/EmployeeContext'
 import { supabase } from '@/lib/supabase'
 
 export default function HolidaysPage() {
 
-  const { employee } = useEmployee()
+  const { employee, loading } = useEmployee()
+
+  useEffect(() => {
+    console.log("Employee:", employee)
+    console.log("Loading:", loading)
+  }, [employee, loading])
 
   const [showModal, setShowModal] = useState(false)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [reason, setReason] = useState('')
   const [saving, setSaving] = useState(false)
+  const [loadingRequests, setLoadingRequests] = useState(true)
+
 
   type HolidayRequest = {
     id: string
@@ -48,33 +55,37 @@ export default function HolidaysPage() {
 
 }, [showModal])
 
+    
+const loadHolidayRequests = useCallback(async () => {
+  console.log("========== LOADING HOLIDAYS ==========")
+  console.log("Employee:", employee)
 
-const loadHolidayRequests = async () => {
+  if (!employee) {
+    console.log("No employee found")
+    return
+  }
 
+  const { data, error } = await supabase
+    .from("holidays")
+    .select("*")
+    .eq("employee_id", employee.id)
+    .order("created_at", { ascending: false })
+
+  console.log("Returned holidays:", data)
+
+  if (error) {
+    console.error(error)
+    return
+  }
+
+  setHolidayRequests(data || [])
+}, [employee])
+
+  useEffect(() => {
     if (!employee) return
 
-    const { data, error } = await supabase
-
-        .from('holidays')
-
-        .select('*')
-
-        .eq('employee_id', employee.id)
-
-        .order('created_at', { ascending: false })
-
-    if (error) {
-
-        console.error(error)
-
-        return
-
-    }
-
-    setHolidayRequests(data || [])
-
-}
-  loadHolidayRequests()
+    loadHolidayRequests()
+  }, [employee, loadHolidayRequests])
 
 
   const submitHolidayRequest = async () => {
