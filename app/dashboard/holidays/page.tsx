@@ -46,11 +46,11 @@ export default function HolidaysPage() {
     if (showModal) {
         nav.style.display = 'none'
     } else {
-        nav.style.display = 'block'
+      nav.style.removeProperty('display')
     }
 
     return () => {
-        nav.style.display = 'block'
+      nav.style.removeProperty('display')
     }
 
 }, [showModal])

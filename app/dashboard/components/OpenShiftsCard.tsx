@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Flame, Clock3, CalendarDays } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { useEmployee } from '../contexts/EmployeeContext'
 
 import Card from './Card'
 import Carousel from './Carousel'
@@ -21,6 +22,7 @@ type OpenShift = {
 // Previews the next available open shifts employees can request from the dashboard.
 export default function OpenShiftsCard() {
 
+  const { employee } = useEmployee()
   const [shifts, setShifts] = useState<OpenShift[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -43,6 +45,18 @@ export default function OpenShiftsCard() {
       .order('shift_date')
       .order('start_time')
       .limit(4)
+
+      // Make the Request Shift button disabled if the employee has already requested that shift.
+      if (employee?.id) {
+        const { data: requests } = await supabase
+          .from('open_shift_requests')
+          .select('shift_id')
+          .eq('employee_id', employee.id)
+
+        const requestedIds = new Set(
+          requests?.map(r => r.shift_id)
+        )
+      }
 
     if (error) {
       console.error(error)

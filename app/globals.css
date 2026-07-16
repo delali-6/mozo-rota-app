@@ -23,6 +23,29 @@
   --font-mono: var(--font-geist-mono);
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+main {
+  min-width: 0;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -31,6 +54,9 @@ body {
 
 .mozo-page {
   min-height: 100%;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at 0% 0%, rgba(196, 154, 108, 0.18), transparent 35%),
     radial-gradient(circle at 100% 100%, rgba(139, 94, 60, 0.12), transparent 28%),
@@ -225,5 +251,46 @@ body {
 
 .mozo-admin-main {
   flex: 1;
+  min-width: 0;
   padding: 1.5rem;
+}
+
+@media (max-width: 767px) {
+  .mozo-admin-shell {
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  .mozo-admin-sidebar {
+    width: 100%;
+    border-right: 0;
+    border-bottom: 1px solid #4a2f1d;
+    padding: 1rem;
+  }
+
+  .mozo-admin-sidebar nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .mozo-admin-link {
+    min-height: 2.65rem;
+    padding: 0.55rem 0.6rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mozo-admin-main {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
 }

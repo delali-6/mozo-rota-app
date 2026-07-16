@@ -185,7 +185,7 @@ export default function DashboardLayout({
 
       {/* Main Content */}
 
-      <main className="flex-1 p-4 pb-28 sm:p-6 md:p-10 md:pb-10">
+      <main className="flex-1 p-4 pb-32 sm:p-6 sm:pb-28 md:p-10 md:pb-10">
 
         {children}
 
@@ -194,7 +194,7 @@ export default function DashboardLayout({
       <nav
         id="mobile-navigation"
         aria-label="Employee mobile navigation"
-        className="fixed inset-x-3 bottom-3 z-50 rounded-2xl border border-[#E5DCCF] bg-white/95 p-2 shadow-[0_16px_40px_rgba(90,58,34,0.18)] backdrop-blur md:hidden"
+        className="fixed inset-x-2 bottom-2 z-50 mx-auto w-[min(30rem,calc(100%-1rem))] rounded-2xl border border-[#E5DCCF] bg-white/95 p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_16px_40px_rgba(90,58,34,0.18)] backdrop-blur md:hidden"
       >
         <div className="grid grid-cols-5 items-center gap-1">
           {bottomLinks.map((link) => {
@@ -205,7 +205,8 @@ export default function DashboardLayout({
               <Link
                 key={link.name}
                 href={link.href}
-                className={`relative flex h-14 flex-col items-center justify-center gap-1 rounded-xl text-[0.68rem] font-semibold transition
+                aria-current={active ? 'page' : undefined}
+                className={`relative flex h-[3.25rem] flex-col items-center justify-center gap-1 rounded-xl text-[0.64rem] font-semibold leading-none transition sm:h-14 sm:text-[0.68rem]
                 ${
                   active
                     ? 'bg-[#6F4E37] text-white'
@@ -245,7 +246,7 @@ export default function DashboardLayout({
               <span>More</span>
             </summary>
 
-            <div className="absolute bottom-16 right-0 w-56 overflow-hidden rounded-xl border border-[#E5DCCF] bg-white shadow-[0_16px_40px_rgba(90,58,34,0.2)]">
+            <div className="absolute bottom-16 right-0 w-[min(15rem,calc(100vw-1.5rem))] overflow-hidden rounded-xl border border-[#E5DCCF] bg-white shadow-[0_16px_40px_rgba(90,58,34,0.2)]">
               {menuLinks.map((link) => {
                 const Icon = link.icon
                 const active = pathname === link.href
@@ -254,6 +255,7 @@ export default function DashboardLayout({
                   <Link
                     key={link.href}
                     href={link.href}
+                    aria-current={active ? 'page' : undefined}
                     className={`flex items-center justify-between gap-3 px-4 py-3 text-sm font-semibold transition
                     ${
                       active

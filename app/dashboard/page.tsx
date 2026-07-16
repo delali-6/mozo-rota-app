@@ -16,15 +16,16 @@ export default function Dashboard() {
 
             <div className="flex justify-center md:justify-start">
 
-                <div className="rounded-2xl bg-[#5a3a22] px-18 py-4 shadow-[0_12px_30px_rgba(90,58,34,0.22)]">
+                <div className="w-full max-w-[22rem] rounded-2xl bg-[#5a3a22] px-4 py-3 shadow-[0_12px_30px_rgba(90,58,34,0.22)] sm:max-w-[20rem] sm:px-5 md:max-w-[24rem]">
 
                     <Image
                         src="/MozoLogo-v3.png"
                         alt="Mozo"
-                        width={260}
-                        height={130}
+                        width={520}
+                        height={260}
                         priority
-                        className="h-auto w-70 sm:w-48 md:w-56"
+                        sizes="(max-width: 640px) 70vw, (max-width: 1024px) 40vw, 280px"
+                        className="mx-auto h-auto w-full max-w-[16rem] sm:max-w-[14rem] md:mx-0 md:max-w-[18rem]"
                     />
 
                 </div>

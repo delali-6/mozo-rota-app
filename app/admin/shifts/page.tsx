@@ -82,8 +82,12 @@ export default function ShiftsPage() {
   const createShift = async () => {
     setFormError(null)
 
-    if (!newShift.employee_id || !newShift.shift_date || !newShift.start_time || !newShift.end_time) {
+    if (!newShift.shift_date || !newShift.start_time || !newShift.end_time) {
       setFormError('Please fill in all required fields.')
+      return
+    }
+    if (!newShift.is_open_shift && !newShift.employee_id) {
+      setFormError('Please select an employee for the assigned shift.')
       return
     }
 
@@ -97,22 +101,24 @@ export default function ShiftsPage() {
     }
 
     const { error } = await supabase.from('shifts').insert({
-      employee_id: newShift.employee_id,
+      employee_id: newShift.is_open_shift ? null : newShift.employee_id,
+
+      is_open_shift: newShift.is_open_shift,
+
       shift_date: newShift.shift_date,
       start_time: newShift.start_time,
       end_time: newShift.end_time,
       break_minutes: newShift.break_minutes,
       shift_role: newShift.shift_role,
       notes: newShift.notes,
-      is_open_shift: newShift.is_open_shift,
       status: newShift.status,
     })
 
     setSaving(false)
+    
 
     if (error) {
       setFormError('Failed to create shift. Please try again.')
-      console.error('Failed to create shift:', error)
       return
     }
 

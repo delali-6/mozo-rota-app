@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { BriefcaseBusiness, } from 'lucide-react'
 import {
     House,
     Users,
@@ -11,13 +12,33 @@ import {
     Plus,
     Bell,
     Briefcase,
+    Menu,
+    Megaphone,
     LogOut,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 // Manager portal shell with persistent admin navigation and Supabase sign-out.
 export default function AdminLayout({ children, }: { children: React.ReactNode }) {
+    const pathname = usePathname()
     const router = useRouter()
+
+    const primaryLinks = [
+        { name: 'Dashboard', href: '/admin', icon: House },
+        { name: 'Employees', href: '/admin/employees', icon: Users },
+        { name: 'Rota', href: '/admin/rota', icon: Calendar },
+        { name: 'Shifts', href: '/admin/shifts', icon: Plus },
+    ]
+
+    const moreLinks = [
+        { name: 'Open Shifts', href: '/admin/open-shifts', icon: BriefcaseBusiness },
+        { name: 'Holidays', href: '/admin/holiday-requests', icon: CalendarHeart },
+        { name: 'Announcements', href: '/admin/announcements', icon: Megaphone },
+        { name: 'Policies', href: '/admin/policies', icon: Briefcase },
+        { name: 'Notifications', href: '/admin/notifications', icon: Bell },
+    ]
+
+    const menuActive = moreLinks.some((link) => pathname === link.href)
 
     // Ends the manager session and sends them back to the shared login page.
     const handleLogout = async () => {
@@ -27,7 +48,7 @@ export default function AdminLayout({ children, }: { children: React.ReactNode }
 
     return (
         <div className="mozo-admin-shell">
-            <aside className="mozo-admin-sidebar">
+            <aside className="mozo-admin-sidebar hidden md:block">
                 <div className="mb-8">
                     <div className="mb-4 rounded-xl overflow-hidden">
                         <Image
@@ -40,53 +61,30 @@ export default function AdminLayout({ children, }: { children: React.ReactNode }
                         />
                     </div>
 
-                    <h1 className="text-2xl font-bold text-[#C49A6C]">Mozo Rota Admin</h1>
+                    <h1 className="text-xl font-bold text-[#C49A6C] sm:text-2xl">Mozo Rota Admin</h1>
 
-                    <p className="mb-4 text-[#E7DCCF]">
+                    <p className="mb-4 text-sm text-[#E7DCCF] sm:text-base">
                         Manager Portal
                     </p>
                 </div>
 
-                <nav className="space-y-2">
-                    <Link href="/admin" className="mozo-admin-link">
-                        <House size={20} />
-                        <span>Dashboard</span>
-                    </Link>
+                <nav className="space-y-2 md:space-y-2">
+                    {[...primaryLinks, ...moreLinks].map((link) => {
+                        const Icon = link.icon
+                        const active = pathname === link.href
 
-                    <Link href="/admin/employees" className="mozo-admin-link">
-                        <Users size={20} />
-                        <span>Employees</span>
-                    </Link>
-
-                    <Link href="/admin/rota" className="mozo-admin-link">
-                        <Calendar size={20} />
-                        <span>Weekly Rota</span>
-                    </Link>
-
-                    <Link href="/admin/shifts" className="mozo-admin-link">
-                        <Plus size={20} />
-                        <span>Shifts</span>
-                    </Link>
-
-                    <Link href="/admin/holiday-requests" className="mozo-admin-link">
-                        <CalendarHeart size={20} />
-                        <span>Holidays</span>
-                    </Link>
-
-                    <Link href="/admin/announcements" className="mozo-admin-link">
-                        <Bell size={20} />
-                        <span>Announcements</span>
-                    </Link>
-
-                    <Link href="/admin/policies" className="mozo-admin-link">
-                        <Briefcase size={20} />
-                        <span>Policies</span>
-                    </Link>
-
-                    <Link href="/admin/notifications" className="mozo-admin-link">
-                        <Bell size={20} />
-                        <span>Notifications</span>
-                    </Link>
+                        return (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                aria-current={active ? 'page' : undefined}
+                                className={`mozo-admin-link ${active ? 'bg-[#6F4E37] text-white' : ''}`}
+                            >
+                                <Icon size={20} />
+                                <span>{link.name}</span>
+                            </Link>
+                        )
+                    })}
 
                     <button onClick={handleLogout} className="mozo-admin-link w-full text-left">
                         <LogOut size={20} />
@@ -95,9 +93,99 @@ export default function AdminLayout({ children, }: { children: React.ReactNode }
                 </nav>
             </aside>
 
-            <main className="mozo-admin-main">
+            <main className="mozo-admin-main pb-32 md:pb-6">
                 {children}
             </main>
+
+            <nav
+                id="mobile-navigation-admin"
+                aria-label="Admin mobile navigation"
+                className="fixed inset-x-2 bottom-2 z-50 mx-auto w-[min(30rem,calc(100%-1rem))] rounded-2xl border border-[#E5DCCF] bg-white/95 p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_16px_40px_rgba(90,58,34,0.18)] backdrop-blur md:hidden"
+            >
+                <div className="grid grid-cols-5 items-center gap-1">
+                    {primaryLinks.map((link) => {
+                        const Icon = link.icon
+                        const active = pathname === link.href
+
+                        return (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                aria-current={active ? 'page' : undefined}
+                                className={`relative flex h-[3.25rem] flex-col items-center justify-center gap-1 rounded-xl text-[0.64rem] font-semibold leading-none transition sm:h-14 sm:text-[0.68rem]
+                                ${
+                                    active
+                                        ? 'bg-[#6F4E37] text-white'
+                                        : 'text-[#7A6A61] hover:bg-[#F1E7DA]'
+                                }`}
+                            >
+                                <Icon
+                                    size={20}
+                                    className={active ? 'text-white' : 'text-[#8B5E3C]'}
+                                    aria-hidden="true"
+                                />
+                                <span>{link.name === 'Dashboard' ? 'Home' : link.name}</span>
+                            </Link>
+                        )
+                    })}
+
+                    <details className="group relative">
+                        <summary
+                            className={`flex h-14 cursor-pointer list-none flex-col items-center justify-center gap-1 rounded-xl text-[0.68rem] font-semibold transition [&::-webkit-details-marker]:hidden
+                            ${
+                                menuActive
+                                    ? 'bg-[#6F4E37] text-white'
+                                    : 'text-[#7A6A61] hover:bg-[#F1E7DA]'
+                            }`}
+                            aria-label="More admin options"
+                        >
+                            <Menu
+                                size={20}
+                                className={menuActive ? 'text-white' : 'text-[#8B5E3C]'}
+                                aria-hidden="true"
+                            />
+                            <span>More</span>
+                        </summary>
+
+                        <div className="absolute bottom-16 right-0 w-[min(16rem,calc(100vw-1.5rem))] overflow-hidden rounded-xl border border-[#E5DCCF] bg-white shadow-[0_16px_40px_rgba(90,58,34,0.2)]">
+                            {moreLinks.map((link) => {
+                                const Icon = link.icon
+                                const active = pathname === link.href
+
+                                return (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        aria-current={active ? 'page' : undefined}
+                                        className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold transition
+                                        ${
+                                            active
+                                                ? 'bg-[#6F4E37] text-white'
+                                                : 'text-[#6D5D54] hover:bg-[#F1E7DA]'
+                                        }`}
+                                    >
+                                        <Icon
+                                            size={18}
+                                            className={active ? 'text-white' : 'text-[#8B5E3C]'}
+                                            aria-hidden="true"
+                                        />
+                                        {link.name}
+                                    </Link>
+                                )
+                            })}
+
+                            <button
+                                type="button"
+                                onClick={handleLogout}
+                                className="flex w-full items-center gap-3 border-t border-[#E5DCCF] px-4 py-3 text-left text-sm font-semibold text-[#6D5D54] transition hover:bg-[#F1E7DA]"
+                            >
+                                <LogOut size={18} className="text-[#8B5E3C]" aria-hidden="true" />
+                                Logout
+                            </button>
+                        </div>
+                    </details>
+                </div>
+            </nav>
         </div>
     )
 }
