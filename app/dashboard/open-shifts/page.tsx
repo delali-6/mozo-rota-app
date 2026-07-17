@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useEmployee } from '../contexts/EmployeeContext'
 
@@ -21,13 +21,19 @@ export default function OpenShiftsPage() {
   const [shifts, setShifts] = useState<OpenShift[]>([])
   const [loading, setLoading] = useState(true)
 
-  const loadOpenShifts = async () => {
-    if (!employee) return
+  const loadOpenShifts = useCallback(async () => {
+    if (!employee) {
+      setLoading(false)
+      return
+    }
 
-  // Load open shifts
-  const { data: shifts } = await supabase
-    .from('shifts')
-    .select(`
+    setLoading(true)
+
+    const today = new Date().toISOString().split('T')[0]
+
+    const { data: shiftsData, error: shiftsError } = await supabase
+      .from('shifts')
+      .select(`
         id,
         shift_date,
         start_time,
@@ -35,34 +41,49 @@ export default function OpenShiftsPage() {
         shift_role,
         notes
     `)
-    .eq('is_open_shift', true)
-    .gte('shift_date', new Date().toISOString().split('T')[0])
-    .order('shift_date')
-    .order('start_time')
+      .eq('is_open_shift', true)
+      .gte('shift_date', today)
+      .order('shift_date')
+      .order('start_time')
 
-// Load THIS employee's requests
-  const { data: requests } = await supabase
-    .from('open_shift_requests')
-    .select('shift_id')
-    .eq('employee_id', employee.id)
+    if (shiftsError) {
+      console.error(shiftsError)
+      setLoading(false)
+      return
+    }
+
+    const { data: requests, error: requestsError } = await supabase
+      .from('open_shift_requests')
+      .select('shift_id')
+      .eq('employee_id', employee.id)
+
+    if (requestsError) {
+      console.error(requestsError)
+      setLoading(false)
+      return
+    }
 
     const requestedIds = new Set(
       requests?.map(r => r.shift_id)
     )
 
     setShifts(
-      (shifts || []).map(shift => ({
+      (shiftsData || []).map(shift => ({
         ...shift,
         hasRequested: requestedIds.has(shift.id),
       }))
     )
 
     setLoading(false)
-  }
+  }, [employee])
 
   useEffect(() => {
-    loadOpenShifts()
-  }, [])
+    const id = window.setTimeout(() => {
+      void loadOpenShifts()
+    }, 0)
+
+    return () => window.clearTimeout(id)
+  }, [loadOpenShifts])
 
   const requestShift = async (shiftId: string) => {
     if (!employee) return
@@ -83,7 +104,7 @@ export default function OpenShiftsPage() {
 
     alert('Shift request sent! 🎉')
 
-    loadOpenShifts()
+    await loadOpenShifts()
   }
 
   return (

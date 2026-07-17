@@ -8,12 +8,7 @@ import { supabase } from '@/lib/supabase'
 
 export default function HolidaysPage() {
 
-  const { employee, loading } = useEmployee()
-
-  useEffect(() => {
-    console.log("Employee:", employee)
-    console.log("Loading:", loading)
-  }, [employee, loading])
+  const { employee } = useEmployee()
 
   const [showModal, setShowModal] = useState(false)
   const [startDate, setStartDate] = useState('')
@@ -57,13 +52,12 @@ export default function HolidaysPage() {
 
     
 const loadHolidayRequests = useCallback(async () => {
-  console.log("========== LOADING HOLIDAYS ==========")
-  console.log("Employee:", employee)
-
   if (!employee) {
-    console.log("No employee found")
+    setLoadingRequests(false)
     return
   }
+
+  setLoadingRequests(true)
 
   const { data, error } = await supabase
     .from("holidays")
@@ -71,20 +65,24 @@ const loadHolidayRequests = useCallback(async () => {
     .eq("employee_id", employee.id)
     .order("created_at", { ascending: false })
 
-  console.log("Returned holidays:", data)
-
   if (error) {
     console.error(error)
+    setLoadingRequests(false)
     return
   }
 
   setHolidayRequests(data || [])
+  setLoadingRequests(false)
 }, [employee])
 
   useEffect(() => {
     if (!employee) return
 
-    loadHolidayRequests()
+    const id = window.setTimeout(() => {
+      void loadHolidayRequests()
+    }, 0)
+
+    return () => window.clearTimeout(id)
   }, [employee, loadHolidayRequests])
 
 
@@ -228,7 +226,15 @@ const loadHolidayRequests = useCallback(async () => {
 
         </h2>
 
-        {holidayRequests.length === 0 ? (
+        {loadingRequests ? (
+
+      <p className="text-gray-500">
+
+        Loading holiday requests...
+
+      </p>
+
+      ) : holidayRequests.length === 0 ? (
 
     <p className="text-gray-500">
 

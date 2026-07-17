@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
 
@@ -27,6 +27,7 @@ type OpenShift = {
   end_time: string
   break_minutes: number
   shift_role: string
+  status: string
   notes: string | null
   open_shift_requests: OpenShiftRequest[]
 }
@@ -36,52 +37,56 @@ export default function OpenShiftsPage() {
   const [openShifts, setOpenShifts] = useState<OpenShift[]>([])
   const [loading, setLoading] = useState(true)
 
-  const loadOpenShifts = async () => {
+  const loadOpenShifts = useCallback(async () => {
     setLoading(true)
 
-  const { data, error } = await supabase
-    .from('shifts')
-    .select(`
-      id,
-      shift_date,
-      start_time,
-      end_time,
-      break_minutes,
-      shift_role,
-      notes,
-      open_shift_requests (
+    const { data, error } = await supabase
+      .from('shifts')
+      .select(`
         id,
+        shift_date,
+        start_time,
+        end_time,
+        break_minutes,
+        shift_role,
         status,
-        created_at,
-        message,
-        employees (
+        notes,
+        open_shift_requests (
           id,
-          first_name,
-          last_name,
-          email,
-          job_title
+          status,
+          created_at,
+          message,
+          employees (
+            id,
+            first_name,
+            last_name,
+            email,
+            job_title
+          )
         )
-      )
-    `)
-    .eq('is_open_shift', true)
-    .order('shift_date', { ascending: true })
-    .order('start_time', { ascending: true })
+        )
+      `)
+      .eq('is_open_shift', true)
+      .order('shift_date', { ascending: true })
+      .order('start_time', { ascending: true })
 
-  if (error) {
-    console.error('Error loading open shifts:', error)
+    if (error) {
+      console.error('Error loading open shifts:', error)
+      setLoading(false)
+      return
+    }
+
+    setOpenShifts(data || [])
     setLoading(false)
-    return
-  }
-
-  console.log('OPEN SHIFTS WITH APPLICANTS:', data)
-
-  setOpenShifts(data || [])
-  setLoading(false)
-}
+  }, [])
 
   useEffect(() => {
-    loadOpenShifts()
-  }, [])
+    const id = window.setTimeout(() => {
+      void loadOpenShifts()
+    }, 0)
+
+    return () => window.clearTimeout(id)
+  }, [loadOpenShifts])
 
   return (
     <main className="space-y-8">
@@ -220,7 +225,7 @@ export default function OpenShiftsPage() {
 
                               {request.message && (
                                 <p className="mt-2 text-sm italic text-gray-600">
-                                  "{request.message}"
+                                  &ldquo;{request.message}&rdquo;
                                 </p>
                               )}
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
 type HolidayRequest = {
@@ -22,7 +22,7 @@ export default function HolidayRequestsPage() {
   const [requests, setRequests] = useState<HolidayRequest[]>([])
   const [loading, setLoading] = useState(true)
 
-  const loadRequests = async () => {
+  const loadRequests = useCallback(async () => {
 
     setLoading(true)
 
@@ -40,8 +40,6 @@ export default function HolidayRequestsPage() {
 
       .order('created_at', { ascending: false })
 
-        console.log(JSON.stringify(data, null, 2))
-
     if (error) {
 
       console.error(error)
@@ -55,7 +53,7 @@ export default function HolidayRequestsPage() {
 
     setLoading(false)
 
-  }
+  }, [])
 
     const updateStatus = async (
         id: string,
@@ -82,13 +80,17 @@ export default function HolidayRequestsPage() {
 
     }
 
-        loadRequests()
+        await loadRequests()
 
     }
 
   useEffect(() => {
-    loadRequests()
-  }, [])
+    const id = window.setTimeout(() => {
+      void loadRequests()
+    }, 0)
+
+    return () => window.clearTimeout(id)
+  }, [loadRequests])
 
 
   return (
@@ -216,47 +218,31 @@ export default function HolidayRequestsPage() {
                   <td className="p-4">
 
                     <div className="flex gap-2">
+                      {request.status === 'Pending' ? (
+                        <>
+                          <button
+                            onClick={() =>
+                              updateStatus(request.id, 'Approved')
+                            }
+                            className="rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700"
+                          >
+                            Approve
+                          </button>
 
-                        <td className="p-4">
-
-                            <div className="flex gap-2">
-
-                                {request.status === 'Pending' ? (
-
-                                    <>
-
-                                        <button
-                                            onClick={() =>
-                                                updateStatus(request.id, 'Approved')
-                                            }
-                                            className="rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700"
-                                        >
-                                            Approve
-                                        </button>
-
-                                        <button
-                                            onClick={() =>
-                                                updateStatus(request.id, 'Declined')
-                                            }
-                                            className="rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-700"
-                                        >
-                                            Decline
-                                        </button>
-
-                                    </>
-
-                                ) : (
-
-                                    <span className="text-sm text-gray-500">
-                                        Completed
-                                    </span>
-
-                                )}
-
-                            </div>
-
-                        </td>
-
+                          <button
+                            onClick={() =>
+                              updateStatus(request.id, 'Declined')
+                            }
+                            className="rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-700"
+                          >
+                            Decline
+                          </button>
+                        </>
+                      ) : (
+                        <span className="text-sm text-gray-500">
+                          Completed
+                        </span>
+                      )}
                     </div>
 
                   </td>

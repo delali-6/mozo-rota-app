@@ -14,18 +14,18 @@ export default function Dashboard() {
 
         <main className="space-y-8">
 
-            <div className="flex justify-center md:justify-start">
+            <div className="flex justify-center md:hidden">
 
-                <div className="w-full max-w-[22rem] rounded-2xl bg-[#5a3a22] px-4 py-3 shadow-[0_12px_30px_rgba(90,58,34,0.22)] sm:max-w-[20rem] sm:px-5 md:max-w-[24rem]">
+                <div className="w-full h-34 rounded-2xl bg-[#5a3a22] px-4 shadow-[0_12px_30px_rgba(90,58,34,0.22)] flex items-center justify-center">
 
                     <Image
                         src="/MozoLogo-v3.png"
                         alt="Mozo"
-                        width={520}
-                        height={260}
+                        width={420}
+                        height={220}
                         priority
-                        sizes="(max-width: 640px) 70vw, (max-width: 1024px) 40vw, 280px"
-                        className="mx-auto h-auto w-full max-w-[16rem] sm:max-w-[14rem] md:mx-0 md:max-w-[18rem]"
+                        sizes="100vw"
+                        className="h-auto w-auto max-h-37 max-w-[20rem] object-contain"
                     />
 
                 </div>

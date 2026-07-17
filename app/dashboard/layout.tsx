@@ -1,7 +1,8 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
-import  Image  from 'next/image'
+import Image from 'next/image'
 import { EmployeeProvider } from './contexts/EmployeeContext'
 import { usePathname, useRouter } from 'next/navigation'
 import {
@@ -19,6 +20,7 @@ import {
   LogOut
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase';
+import { useMobileBottomNavVisibility } from '@/lib/useMobileBottomNavVisibility'
 
 // Employee portal shell: desktop sidebar, mobile bottom navigation, and shared employee context.
 export default function DashboardLayout({
@@ -28,6 +30,8 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname()
   const router = useRouter()
+  const mobileNavVisible = useMobileBottomNavVisibility(pathname)
+  const moreMenuRef = useRef<HTMLDetailsElement>(null)
 
     // Full desktop navigation keeps every employee route visible on larger screens.
     const links = [
@@ -113,6 +117,14 @@ export default function DashboardLayout({
 
   const menuActive = menuLinks.some((link) => pathname === link.href)
 
+  useEffect(() => {
+    moreMenuRef.current?.removeAttribute('open')
+  }, [pathname])
+
+  const closeMoreMenu = () => {
+    moreMenuRef.current?.removeAttribute('open')
+  }
+
     // Signs out from Supabase and returns the user to the login screen.
     const handleLogout = async () => {
         await supabase.auth.signOut()
@@ -129,7 +141,16 @@ export default function DashboardLayout({
 
         <div className="p-6 border-b border-[#6D4C41]">
 
-          <Image src="/MozoLogo-v3.png" alt="Logo" width={400} height={200} />
+          <div className="mb-4 rounded-xl overflow-hidden">
+              <Image
+                src="/MozoLogo-v3.png"
+                alt="Mozo Coffee logo"
+                width={560}
+                height={270}
+                className="h-auto w-full object-cover"
+                priority
+                />
+          </div>
 
           <h1 className="text-2xl font-bold text-[#C49A6C]">Employee Portal</h1>
 
@@ -194,7 +215,9 @@ export default function DashboardLayout({
       <nav
         id="mobile-navigation"
         aria-label="Employee mobile navigation"
-        className="fixed inset-x-2 bottom-2 z-50 mx-auto w-[min(30rem,calc(100%-1rem))] rounded-2xl border border-[#E5DCCF] bg-white/95 p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_16px_40px_rgba(90,58,34,0.18)] backdrop-blur md:hidden"
+        className={`fixed inset-x-2 bottom-2 z-50 mx-auto w-[min(30rem,calc(100%-1rem))] rounded-2xl border border-[#E5DCCF] bg-white/95 p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_16px_40px_rgba(90,58,34,0.18)] backdrop-blur transition-all duration-300 md:hidden ${
+          mobileNavVisible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-6 opacity-0'
+        }`}
       >
         <div className="grid grid-cols-5 items-center gap-1">
           {bottomLinks.map((link) => {
@@ -228,7 +251,7 @@ export default function DashboardLayout({
             )
           })}
 
-          <details className="group relative">
+          <details ref={moreMenuRef} className="group relative">
             <summary
               className={`flex h-14 cursor-pointer list-none flex-col items-center justify-center gap-1 rounded-xl text-[0.68rem] font-semibold transition [&::-webkit-details-marker]:hidden
               ${
@@ -255,6 +278,7 @@ export default function DashboardLayout({
                   <Link
                     key={link.href}
                     href={link.href}
+                    onClick={closeMoreMenu}
                     aria-current={active ? 'page' : undefined}
                     className={`flex items-center justify-between gap-3 px-4 py-3 text-sm font-semibold transition
                     ${
@@ -296,7 +320,10 @@ export default function DashboardLayout({
 
               <button
                 type="button"
-                onClick={handleLogout}
+                onClick={() => {
+                  closeMoreMenu()
+                  void handleLogout()
+                }}
                 className="flex w-full items-center gap-3 border-t border-[#E5DCCF] px-4 py-3 text-left text-sm font-semibold text-[#6D5D54] transition hover:bg-[#F1E7DA]"
               >
                 <LogOut size={18} className="text-[#8B5E3C]" aria-hidden="true" />

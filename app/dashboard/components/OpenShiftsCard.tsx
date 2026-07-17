@@ -8,7 +8,6 @@ import { useEmployee } from '../contexts/EmployeeContext'
 import Card from './Card'
 import Carousel from './Carousel'
 import SectionHeader from './SectionHeader'
-import CardButton from './CardButton'
 import StatBadge from './StatBadge'
 
 type OpenShift = {
@@ -17,6 +16,7 @@ type OpenShift = {
   start_time: string
   end_time: string
   shift_role: string
+  hasRequested?: boolean
 }
 
 // Previews the next available open shifts employees can request from the dashboard.
@@ -25,9 +25,16 @@ export default function OpenShiftsCard() {
   const { employee } = useEmployee()
   const [shifts, setShifts] = useState<OpenShift[]>([])
   const [loading, setLoading] = useState(true)
+  const [submittingShiftId, setSubmittingShiftId] = useState<string | null>(null)
 
   // Loads a small set of upcoming open shifts for the carousel preview.
   const loadOpenShifts = useCallback(async () => {
+    if (!employee) {
+      setLoading(false)
+      return
+    }
+
+    setLoading(true)
 
     const today = new Date().toISOString().split('T')[0]
 
@@ -46,25 +53,35 @@ export default function OpenShiftsCard() {
       .order('start_time')
       .limit(4)
 
-      // Make the Request Shift button disabled if the employee has already requested that shift.
-      if (employee?.id) {
-        const { data: requests } = await supabase
-          .from('open_shift_requests')
-          .select('shift_id')
-          .eq('employee_id', employee.id)
-
-        const requestedIds = new Set(
-          requests?.map(r => r.shift_id)
-        )
-      }
-
     if (error) {
       console.error(error)
+      setLoading(false)
+      return
     }
 
-    setShifts(data || [])
+    const { data: requests, error: requestsError } = await supabase
+      .from('open_shift_requests')
+      .select('shift_id')
+      .eq('employee_id', employee.id)
+
+    if (requestsError) {
+      console.error(requestsError)
+      setLoading(false)
+      return
+    }
+
+    const requestedIds = new Set(
+      requests?.map(r => r.shift_id)
+    )
+
+    setShifts(
+      (data || []).map((shift) => ({
+        ...shift,
+        hasRequested: requestedIds.has(shift.id),
+      }))
+    )
     setLoading(false)
-  }, [])
+  }, [employee])
 
   useEffect(() => {
     const id = window.setTimeout(() => {
@@ -73,6 +90,34 @@ export default function OpenShiftsCard() {
 
     return () => window.clearTimeout(id)
   }, [loadOpenShifts])
+
+  const requestShift = async (shiftId: string) => {
+    if (!employee) return
+
+    setSubmittingShiftId(shiftId)
+
+    const { error } = await supabase
+      .from('open_shift_requests')
+      .insert({
+        shift_id: shiftId,
+        employee_id: employee.id,
+        status: 'Pending',
+      })
+
+    setSubmittingShiftId(null)
+
+    if (error) {
+      console.error(error)
+      alert(error.message)
+      return
+    }
+
+    setShifts((current) =>
+      current.map((shift) =>
+        shift.id === shiftId ? { ...shift, hasRequested: true } : shift
+      )
+    )
+  }
 
   return (
 
@@ -161,13 +206,24 @@ export default function OpenShiftsCard() {
 
                 </div>
 
-                <CardButton
-                  href={`/dashboard/open-shifts/${shift.id}`}
+                <button
+                  type="button"
+                  disabled={shift.hasRequested || submittingShiftId === shift.id}
+                  onClick={() => requestShift(shift.id)}
+                  className={`mt-6 inline-flex w-full items-center justify-center rounded-xl px-5 py-3 transition ${
+                    shift.hasRequested
+                      ? 'cursor-not-allowed bg-gray-300 text-gray-600'
+                      : submittingShiftId === shift.id
+                        ? 'cursor-wait bg-[#A1887F] text-white'
+                        : 'bg-[#6F4E37] text-white hover:bg-[#5D4037]'
+                  }`}
                 >
-
-                  Request Shift
-
-                </CardButton>
+                  {shift.hasRequested
+                    ? 'Requested'
+                    : submittingShiftId === shift.id
+                      ? 'Requesting...'
+                      : 'Request Shift'}
+                </button>
 
               </div>
 

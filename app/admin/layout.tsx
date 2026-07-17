@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
@@ -17,11 +18,14 @@ import {
     LogOut,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { useMobileBottomNavVisibility } from '@/lib/useMobileBottomNavVisibility'
 
 // Manager portal shell with persistent admin navigation and Supabase sign-out.
 export default function AdminLayout({ children, }: { children: React.ReactNode }) {
     const pathname = usePathname()
     const router = useRouter()
+    const mobileNavVisible = useMobileBottomNavVisibility(pathname)
+    const moreMenuRef = useRef<HTMLDetailsElement>(null)
 
     const primaryLinks = [
         { name: 'Dashboard', href: '/admin', icon: House },
@@ -39,6 +43,14 @@ export default function AdminLayout({ children, }: { children: React.ReactNode }
     ]
 
     const menuActive = moreLinks.some((link) => pathname === link.href)
+
+    useEffect(() => {
+        moreMenuRef.current?.removeAttribute('open')
+    }, [pathname])
+
+    const closeMoreMenu = () => {
+        moreMenuRef.current?.removeAttribute('open')
+    }
 
     // Ends the manager session and sends them back to the shared login page.
     const handleLogout = async () => {
@@ -100,7 +112,9 @@ export default function AdminLayout({ children, }: { children: React.ReactNode }
             <nav
                 id="mobile-navigation-admin"
                 aria-label="Admin mobile navigation"
-                className="fixed inset-x-2 bottom-2 z-50 mx-auto w-[min(30rem,calc(100%-1rem))] rounded-2xl border border-[#E5DCCF] bg-white/95 p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_16px_40px_rgba(90,58,34,0.18)] backdrop-blur md:hidden"
+                className={`fixed inset-x-2 bottom-2 z-50 mx-auto w-[min(30rem,calc(100%-1rem))] rounded-2xl border border-[#E5DCCF] bg-white/95 p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_16px_40px_rgba(90,58,34,0.18)] backdrop-blur transition-all duration-300 md:hidden ${
+                    mobileNavVisible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-6 opacity-0'
+                }`}
             >
                 <div className="grid grid-cols-5 items-center gap-1">
                     {primaryLinks.map((link) => {
@@ -129,7 +143,7 @@ export default function AdminLayout({ children, }: { children: React.ReactNode }
                         )
                     })}
 
-                    <details className="group relative">
+                    <details ref={moreMenuRef} className="group relative">
                         <summary
                             className={`flex h-14 cursor-pointer list-none flex-col items-center justify-center gap-1 rounded-xl text-[0.68rem] font-semibold transition [&::-webkit-details-marker]:hidden
                             ${
@@ -156,6 +170,7 @@ export default function AdminLayout({ children, }: { children: React.ReactNode }
                                     <Link
                                         key={link.href}
                                         href={link.href}
+                                        onClick={closeMoreMenu}
                                         aria-current={active ? 'page' : undefined}
                                         className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold transition
                                         ${
@@ -176,7 +191,10 @@ export default function AdminLayout({ children, }: { children: React.ReactNode }
 
                             <button
                                 type="button"
-                                onClick={handleLogout}
+                                onClick={() => {
+                                    closeMoreMenu()
+                                    void handleLogout()
+                                }}
                                 className="flex w-full items-center gap-3 border-t border-[#E5DCCF] px-4 py-3 text-left text-sm font-semibold text-[#6D5D54] transition hover:bg-[#F1E7DA]"
                             >
                                 <LogOut size={18} className="text-[#8B5E3C]" aria-hidden="true" />
